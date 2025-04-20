@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 39 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 83%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 0 0% 83%;
+    --input: 0 0% 83%;
+    --ring: 39 100% 50%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 39 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 39 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .hopin-card {
+    @apply bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-hopin-gray/20 dark:border-hopin-gray/10;
+  }
+
+  .hopin-button {
+    @apply bg-hopin-orange hover:bg-hopin-orange-dark text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-hopin-orange focus:ring-opacity-50;
+  }
+
+  .hopin-input {
+    @apply bg-white dark:bg-gray-800 border border-hopin-gray/30 dark:border-hopin-gray/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-hopin-orange focus:ring-opacity-50 transition-all duration-300;
+  }
+
+  .hopin-section {
+    @apply py-12 md:py-20;
+  }
+
+  .hopin-container {
+    @apply container mx-auto px-4;
+  }
+
+  .hopin-heading {
+    @apply text-3xl md:text-4xl font-bold mb-6;
+  }
+
+  .hopin-subheading {
+    @apply text-xl md:text-2xl font-semibold mb-4;
+  }
+
+  .hopin-text {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .hopin-badge {
+    @apply bg-hopin-orange/20 text-hopin-orange-dark px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .hopin-card-hover {
+    @apply hover:border-hopin-orange hover:shadow-lg transition-all duration-300;
+  }
+
+  .hopin-divider {
+    @apply h-px w-full bg-hopin-gray/30 dark:bg-hopin-gray/20 my-8;
+  }
+
+  .hopin-icon-container {
+    @apply bg-hopin-orange/10 p-3 rounded-full;
+  }
+
+  .wave-bg {
+    @apply absolute w-full h-full top-0 left-0 z-0 overflow-hidden;
+  }
+
+  .wave-bg::before {
+    content: "";
+    @apply absolute w-[200%] h-full bg-[url('/wave.svg')] bg-repeat-x animate-wave;
+  }
+}
