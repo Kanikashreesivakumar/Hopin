@@ -36,7 +36,6 @@ export default function AIChatbot() {
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
@@ -48,7 +47,10 @@ export default function AIChatbot() {
     setIsTyping(true)
 
     try {
-      // Get response from Gemini API
+      if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+        throw new Error("Missing Gemini API key");
+      }
+
       const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
         method: 'POST',
         headers: {
@@ -58,9 +60,33 @@ export default function AIChatbot() {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `You are HOPIN Assistant, a helpful and friendly AI chatbot. Answer the following question concisely: ${inputValue}`
+              text: `You are HOPIN Assistant, a helpful and friendly AI chatbot for a carpooling and ride-sharing platform. Help users with ride-related queries, booking assistance, and general platform guidance. Current user query: ${inputValue}`
             }]
-          }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1000,
+          },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            }
+          ]
         })
       });
 
@@ -69,7 +95,12 @@ export default function AIChatbot() {
       }
 
       const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "I apologize, but I couldn't process that request.";
+      
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error('No response generated');
+      }
+
+      const text = data.candidates[0]?.content?.parts?.[0]?.text || "I apologize, but I couldn't process that request.";
       
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
