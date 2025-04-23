@@ -163,6 +163,11 @@ export default function Home() {
           <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
             <Link href="/login">Login</Link>
           </Button>
+
+          <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+      
         </div>
       </header>
 
@@ -465,13 +470,13 @@ export default function Home() {
                       <path
                         d="M10,30 Q30,10 50,30 Q70,50 90,30"
                         fill="none"
-                        stroke="#FFA500"
+                        stroke="black"
                         strokeWidth="3"
                         strokeDasharray="5,3"
                         className="animate-pulse"
                       />
-                      <circle cx="10" cy="30" r="4" fill="#FFA500" />
-                      <circle cx="90" cy="30" r="4" fill="#FFA500" />
+                      <circle cx="10" cy="30" r="4" fill="white" />
+                      <circle cx="90" cy="30" r="4" fill="white" />
                     </svg>
                   </div>
                 </div>
