@@ -33,7 +33,6 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import RoleNavbar from "@/components/role-navbar"
 
-// Mock data for events
 const initialEvents = [
   {
     id: "1",
