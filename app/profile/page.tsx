@@ -28,6 +28,7 @@ import {
   User,
 } from "lucide-react"
 import PageHeader from "@/components/page-header"
+import { useAuth } from "@/hooks/AuthContext"
 
 // Mock user data
 const userData = {
@@ -102,8 +103,15 @@ const rideHistory = [
 ]
 
 export default function ProfilePage() {
+  const { user } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
-  const [profile, setProfile] = useState(userData)
+  const [profile, setProfile] = useState({
+    ...userData,
+    ...user,
+    avatar: user?.avatar || userData.avatar,
+    name: user?.name || userData.name,
+    email: user?.email || userData.email,
+  })
   const [showSuccessAlert, setShowSuccessAlert] = useState(false)
 
   const handleProfileUpdate = () => {

@@ -11,28 +11,45 @@ import { Label } from "@/components/ui/label"
 import { Car, ChevronRight, Key, Lock, Mail, MapPin, Shield, User } from "lucide-react"
 import Logo from "@/components/logo"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/hooks/AuthContext"
 
 type UserRole = "driver" | "passenger" | "admin" | null
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login } = useAuth()
   const [selectedRole, setSelectedRole] = useState<UserRole>(null)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
     if (!selectedRole || !email || !password) return
-
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setError(data.error || "Login failed")
+        setIsLoading(false)
+        return
+      }
+      // Save user and token in context
+      login(data.user, data.token)
+      // Redirect based on role (if user.role exists, otherwise use selectedRole)
+      router.push(`/dashboard/${data.user.role || selectedRole}`)
+    } catch (err) {
+      setError("Login failed. Please try again.")
+    } finally {
       setIsLoading(false)
-      // Redirect based on role
-      router.push(`/dashboard/${selectedRole}`)
-    }, 1500)
+    }
   }
 
   const roleCards = [
@@ -151,6 +168,9 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
+              {error && (
+                <div className="text-red-500 text-sm text-center mb-2">{error}</div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">

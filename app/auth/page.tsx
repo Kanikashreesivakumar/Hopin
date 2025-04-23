@@ -66,69 +66,86 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
 
-    // Validate inputs
     if (!email || !password) {
       setError("Please fill in all fields")
       return
     }
-
     if (!validateEmail(email)) {
       setError("Please enter a valid email address")
       return
     }
-
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setError(data.error || "Login failed")
+        setIsLoading(false)
+        return
+      }
       setSuccess("Login successful! Redirecting...")
-
-      // Redirect to dashboard after successful login
+      // Store JWT in localStorage or cookie (for demo, localStorage)
+      localStorage.setItem("token", data.token)
       setTimeout(() => {
         router.push("/dashboard")
       }, 1500)
-    }, 2000)
+    } catch (err) {
+      setError("Login failed. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
 
-    // Validate inputs
     if (!name || !email || !password || !confirmPassword) {
       setError("Please fill in all fields")
       return
     }
-
     if (!validateEmail(email)) {
       setError("Please enter a valid email address")
       return
     }
-
     if (password !== confirmPassword) {
       setError("Passwords do not match")
       return
     }
-
     if (passwordStrength < 3) {
       setError("Please use a stronger password")
       return
     }
-
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setError(data.error || "Signup failed")
+        setIsLoading(false)
+        return
+      }
       setSuccess("Account created successfully! Redirecting...")
-
-      // Redirect to profile page after successful signup
+      localStorage.setItem("token", data.token)
       setTimeout(() => {
         router.push("/profile")
       }, 1500)
-    }, 2000)
+    } catch (err) {
+      setError("Signup failed. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
