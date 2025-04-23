@@ -10,6 +10,7 @@ import { Bell, Calendar, CreditCard, LogIn, LogOut, Menu, Settings, User, X } fr
 import { motion } from "framer-motion"
 import Logo from "@/components/logo"
 import { useMobile } from "@/hooks/use-mobile"
+import { useAuth } from "@/hooks/AuthContext"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,17 +23,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
-// Mock authentication state - in a real app, this would come from an auth context
-const isAuthenticated = false
-const user = {
-  name: "Alex Johnson",
-  email: "alex.johnson@example.com",
-  avatar: "/placeholder.svg?height=32&width=32",
-}
-
 export default function Navbar() {
   const pathname = usePathname()
   const isMobile = useMobile()
+  const { user, logout } = useAuth()
+  const isAuthenticated = !!user
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -158,16 +153,16 @@ export default function Navbar() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar} alt={user.name} />
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                          <AvatarImage src={user?.avatar} alt={user?.name} />
+                          <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium leading-none">{user.name}</p>
-                          <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                          <p className="text-sm font-medium leading-none">{user?.name}</p>
+                          <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
@@ -190,7 +185,7 @@ export default function Navbar() {
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={logout}>
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Log out</span>
                       </DropdownMenuItem>
@@ -229,12 +224,12 @@ export default function Navbar() {
                     {isAuthenticated && (
                       <div className="flex items-center space-x-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={user.avatar} alt={user.name} />
-                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                          <AvatarImage src={user?.avatar} alt={user?.name} />
+                          <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
+                          <div className="font-medium">{user?.name}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</div>
                         </div>
                       </div>
                     )}
@@ -258,7 +253,7 @@ export default function Navbar() {
 
                     <div className="mt-auto pt-6">
                       {isAuthenticated ? (
-                        <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" className="w-full" onClick={logout}>
                           <LogOut className="mr-2 h-4 w-4" />
                           Log out
                         </Button>

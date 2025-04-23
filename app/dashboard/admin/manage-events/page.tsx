@@ -33,79 +33,25 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import RoleNavbar from "@/components/role-navbar"
 
-// Mock data for events
-const initialEvents = [
-  {
-    id: "1",
-    name: "Spring Music Festival",
-    date: "2025-04-15T18:00:00",
-    location: "Student Union Building",
-    description: "Annual music festival featuring student bands and performers.",
-    attendees: 120,
-    image: "/placeholder.svg?height=200&width=400",
-    status: "upcoming",
-  },
-  {
-    id: "2",
-    name: "Basketball Championship",
-    date: "2025-04-20T19:30:00",
-    location: "University Sports Center",
-    description: "Final match of the inter-college basketball tournament.",
-    attendees: 85,
-    image: "/placeholder.svg?height=200&width=400",
-    status: "upcoming",
-  },
-  {
-    id: "3",
-    name: "Career Fair",
-    date: "2025-04-22T10:00:00",
-    location: "Engineering Building",
-    description: "Connect with potential employers and explore career opportunities.",
-    attendees: 200,
-    image: "/placeholder.svg?height=200&width=400",
-    status: "upcoming",
-  },
-  {
-    id: "4",
-    name: "Hackathon 2025",
-    date: "2025-04-25T08:00:00",
-    location: "Computer Science Building",
-    description: "24-hour coding competition with prizes for the best projects.",
-    attendees: 75,
-    image: "/placeholder.svg?height=200&width=400",
-    status: "upcoming",
-  },
-  {
-    id: "5",
-    name: "Alumni Networking",
-    date: "2025-03-28T17:00:00",
-    location: "Business School Atrium",
-    description: "Network with successful alumni and learn from their experiences.",
-    attendees: 50,
-    image: "/placeholder.svg?height=200&width=400",
-    status: "past",
-  },
-]
-
 interface Event {
-  id: string
-  name: string
-  date: string
+  _id: string
+  title: string
+  date: string | Date
   location: string
-  description: string
-  attendees: number
-  image: string
-  status: "upcoming" | "past" | "draft"
+  description?: string
+  attendees?: number
+  image?: string
+  status?: "upcoming" | "past" | "draft"
 }
 
 export default function ManageEventsPage() {
-  const [events, setEvents] = useState<Event[]>(initialEvents)
+  const [events, setEvents] = useState<Event[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>(events)
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
   const [activeTab, setActiveTab] = useState("all")
   const [isAddEventOpen, setIsAddEventOpen] = useState(false)
   const [newEvent, setNewEvent] = useState<Partial<Event>>({
-    name: "",
+    title: "",
     date: "",
     location: "",
     description: "",
@@ -116,17 +62,51 @@ export default function ManageEventsPage() {
   const [alertMessage, setAlertMessage] = useState("")
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Filter events based on search term and active tab
+  const fetchEvents = async () => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const response = await fetch("/api/admin/events")
+      if (!response.ok) {
+        throw new Error("Failed to fetch events")
+      }
+      const result = await response.json()
+      if (result.success) {
+        const mappedEvents = result.data.map((eventData: any) => ({
+          ...eventData,
+          _id: eventData._id,
+          title: eventData.title,
+          date: eventData.date,
+        }))
+        setEvents(mappedEvents)
+        setFilteredEvents(mappedEvents)
+      } else {
+        throw new Error(result.error || "Failed to fetch events")
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+      console.error("Fetch error:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchEvents()
+  }, [])
+
   useEffect(() => {
     let filtered = events
 
     if (searchTerm) {
       filtered = filtered.filter(
         (event) =>
-          event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.description.toLowerCase().includes(searchTerm.toLowerCase()),
+          (event.description && event.description.toLowerCase().includes(searchTerm.toLowerCase())),
       )
     }
 
@@ -137,80 +117,147 @@ export default function ManageEventsPage() {
     setFilteredEvents(filtered)
   }, [events, searchTerm, activeTab])
 
-  const handleAddEvent = () => {
-    if (!newEvent.name || !newEvent.date || !newEvent.location) {
+  const handleAddEvent = async () => {
+    if (!newEvent.title || !newEvent.date || !newEvent.location) {
+      setAlertMessage("Please fill in required event details (Title, Date, Location).")
+      setShowSuccessAlert(true)
+      setTimeout(() => setShowSuccessAlert(false), 3000)
       return
     }
 
     setIsSubmitting(true)
+    setError(null)
 
-    // Simulate API call
-    setTimeout(() => {
-      const eventToAdd: Event = {
-        id: Date.now().toString(),
-        name: newEvent.name || "",
-        date: newEvent.date || new Date().toISOString(),
-        location: newEvent.location || "",
-        description: newEvent.description || "",
-        attendees: 0,
-        image: "/placeholder.svg?height=200&width=400",
-        status: (newEvent.status as "upcoming" | "past" | "draft") || "upcoming",
+    try {
+      const response = await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newEvent.title,
+          date: newEvent.date,
+          location: newEvent.location,
+          description: newEvent.description,
+          status: newEvent.status,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to add event")
       }
 
-      setEvents([eventToAdd, ...events])
+      fetchEvents()
+
       setIsAddEventOpen(false)
       setNewEvent({
-        name: "",
+        title: "",
         date: "",
         location: "",
         description: "",
         status: "upcoming",
       })
       setSelectedDate(undefined)
-      setIsSubmitting(false)
 
-      // Show success alert
       setAlertMessage("Event added successfully!")
       setShowSuccessAlert(true)
       setTimeout(() => setShowSuccessAlert(false), 3000)
-    }, 1000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add event")
+      setAlertMessage(err instanceof Error ? err.message : "Failed to add event")
+      setShowSuccessAlert(true)
+      setTimeout(() => setShowSuccessAlert(false), 4000)
+      console.error("Add event error:", err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleUpdateEvent = () => {
-    if (!editingEvent || !editingEvent.name || !editingEvent.date || !editingEvent.location) {
+  const handleUpdateEvent = async () => {
+    if (!editingEvent || !editingEvent.title || !editingEvent.date || !editingEvent.location) {
+      setAlertMessage("Invalid event data for update.")
+      setShowSuccessAlert(true)
+      setTimeout(() => setShowSuccessAlert(false), 3000)
       return
     }
 
     setIsSubmitting(true)
+    setError(null)
 
-    // Simulate API call
-    setTimeout(() => {
-      setEvents(events.map((event) => (event.id === editingEvent.id ? editingEvent : event)))
+    try {
+      const response = await fetch(`/api/admin/events?eventId=${editingEvent._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: editingEvent.title,
+          date: editingEvent.date,
+          location: editingEvent.location,
+          description: editingEvent.description,
+          status: editingEvent.status,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to update event")
+      }
+
+      fetchEvents()
+
       setEditingEvent(null)
-      setIsSubmitting(false)
 
-      // Show success alert
       setAlertMessage("Event updated successfully!")
       setShowSuccessAlert(true)
       setTimeout(() => setShowSuccessAlert(false), 3000)
-    }, 1000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update event")
+      setAlertMessage(err instanceof Error ? err.message : "Failed to update event")
+      setShowSuccessAlert(true)
+      setTimeout(() => setShowSuccessAlert(false), 4000)
+      console.error("Update event error:", err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleDeleteEvent = (id: string) => {
-    // Simulate API call
-    setTimeout(() => {
-      setEvents(events.filter((event) => event.id !== id))
+  const handleDeleteEvent = async (id: string) => {
+    setIsSubmitting(true)
+    setError(null)
 
-      // Show success alert
+    try {
+      const response = await fetch(`/api/admin/events?eventId=${id}`, {
+        method: "DELETE",
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to delete event")
+      }
+
+      fetchEvents()
+
       setAlertMessage("Event deleted successfully!")
       setShowSuccessAlert(true)
       setTimeout(() => setShowSuccessAlert(false), 3000)
-    }, 500)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete event")
+      setAlertMessage(err instanceof Error ? err.message : "Failed to delete event")
+      setShowSuccessAlert(true)
+      setTimeout(() => setShowSuccessAlert(false), 4000)
+      console.error("Delete event error:", err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date)
     if (date) {
+      const currentTime = newEvent.date ? new Date(newEvent.date).toTimeString().split(" ")[0] : "00:00:00"
+      const [hours, minutes] = currentTime.split(":").map(Number)
+      date.setHours(hours, minutes)
       setNewEvent({
         ...newEvent,
         date: date.toISOString(),
@@ -218,13 +265,55 @@ export default function ManageEventsPage() {
     }
   }
 
+  const handleTimeSelect = (timeString: string, target: "new" | "edit") => {
+    const [hours, minutes] = timeString.split(":").map(Number)
+    if (target === "new") {
+      const baseDate = selectedDate || new Date()
+      baseDate.setHours(hours, minutes, 0, 0)
+      setNewEvent({ ...newEvent, date: baseDate.toISOString() })
+    } else if (editingEvent && editingEvent.date) {
+      const baseDate = new Date(editingEvent.date)
+      baseDate.setHours(hours, minutes, 0, 0)
+      setEditingEvent({ ...editingEvent, date: baseDate.toISOString() })
+    }
+  }
+
   const handleEditDateSelect = (date: Date | undefined) => {
     if (date && editingEvent) {
+      const currentTime = editingEvent.date ? new Date(editingEvent.date).toTimeString().split(" ")[0] : "00:00:00"
+      const [hours, minutes] = currentTime.split(":").map(Number)
+      date.setHours(hours, minutes)
       setEditingEvent({
         ...editingEvent,
         date: date.toISOString(),
       })
     }
+  }
+
+  if (isLoading && events.length === 0) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
+        <RoleNavbar role="admin" userName="Admin User" />
+        <main className="container mx-auto px-4 py-8 text-center">
+          <p>Loading events...</p>
+        </main>
+      </div>
+    )
+  }
+
+  if (error && events.length === 0) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
+        <RoleNavbar role="admin" userName="Admin User" />
+        <main className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error loading events</h1>
+          <p className="text-gray-600 dark:text-gray-400">{error}</p>
+          <Button onClick={fetchEvents} className="mt-4">
+            Try Again
+          </Button>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -239,7 +328,6 @@ export default function ManageEventsPage() {
           </div>
         </div>
 
-        {/* Success Alert */}
         <AnimatePresence>
           {showSuccessAlert && (
             <motion.div
@@ -248,7 +336,13 @@ export default function ManageEventsPage() {
               exit={{ opacity: 0, y: -20 }}
               className="fixed top-20 right-4 z-50"
             >
-              <Alert className="bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 w-72">
+              <Alert
+                className={`${
+                  error
+                    ? "bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200"
+                    : "bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200"
+                } w-72`}
+              >
                 <AlertDescription>{alertMessage}</AlertDescription>
               </Alert>
             </motion.div>
@@ -296,8 +390,8 @@ export default function ManageEventsPage() {
                         <Input
                           id="event-name"
                           placeholder="Spring Music Festival"
-                          value={newEvent.name}
-                          onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value })}
+                          value={newEvent.title || ""}
+                          onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                         />
                       </div>
                       <div className="grid gap-2">
@@ -306,7 +400,7 @@ export default function ManageEventsPage() {
                           <PopoverTrigger asChild>
                             <Button variant="outline" className="w-full justify-start text-left font-normal">
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {selectedDate ? format(selectedDate, "PPP p") : <span>Pick a date</span>}
+                              {newEvent.date ? format(new Date(newEvent.date), "PPP p") : <span>Pick a date</span>}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0">
@@ -319,17 +413,8 @@ export default function ManageEventsPage() {
                             <div className="p-3 border-t border-border">
                               <Input
                                 type="time"
-                                onChange={(e) => {
-                                  if (selectedDate) {
-                                    const date = new Date(selectedDate)
-                                    const [hours, minutes] = e.target.value.split(":").map(Number)
-                                    date.setHours(hours, minutes)
-                                    setNewEvent({
-                                      ...newEvent,
-                                      date: date.toISOString(),
-                                    })
-                                  }
-                                }}
+                                defaultValue={newEvent.date ? format(new Date(newEvent.date), "HH:mm") : ""}
+                                onChange={(e) => handleTimeSelect(e.target.value, "new")}
                               />
                             </div>
                           </PopoverContent>
@@ -340,7 +425,7 @@ export default function ManageEventsPage() {
                         <Input
                           id="event-location"
                           placeholder="Student Union Building"
-                          value={newEvent.location}
+                          value={newEvent.location || ""}
                           onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
                         />
                       </div>
@@ -350,7 +435,7 @@ export default function ManageEventsPage() {
                           id="event-description"
                           placeholder="Provide details about your event..."
                           rows={3}
-                          value={newEvent.description}
+                          value={newEvent.description || ""}
                           onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                         />
                       </div>
@@ -359,7 +444,7 @@ export default function ManageEventsPage() {
                         <select
                           id="event-status"
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          value={newEvent.status}
+                          value={newEvent.status || "upcoming"}
                           onChange={(e) =>
                             setNewEvent({ ...newEvent, status: e.target.value as "upcoming" | "past" | "draft" })
                           }
@@ -376,7 +461,7 @@ export default function ManageEventsPage() {
                       <Button
                         onClick={handleAddEvent}
                         className="bg-hopin-orange hover:bg-hopin-orange-dark text-white"
-                        disabled={!newEvent.name || !newEvent.date || !newEvent.location || isSubmitting}
+                        disabled={!newEvent.title || !newEvent.date || !newEvent.location || isSubmitting}
                       >
                         {isSubmitting ? (
                           <>
@@ -410,7 +495,6 @@ export default function ManageEventsPage() {
                   </DialogContent>
                 </Dialog>
 
-                {/* Edit Event Dialog */}
                 <Dialog open={!!editingEvent} onOpenChange={(open) => !open && setEditingEvent(null)}>
                   <DialogContent className="sm:max-w-[525px]">
                     <DialogHeader>
@@ -423,8 +507,8 @@ export default function ManageEventsPage() {
                           <Label htmlFor="edit-event-name">Event Name</Label>
                           <Input
                             id="edit-event-name"
-                            value={editingEvent.name}
-                            onChange={(e) => setEditingEvent({ ...editingEvent, name: e.target.value })}
+                            value={editingEvent.title || ""}
+                            onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
                           />
                         </div>
                         <div className="grid gap-2">
@@ -433,11 +517,7 @@ export default function ManageEventsPage() {
                             <PopoverTrigger asChild>
                               <Button variant="outline" className="w-full justify-start text-left font-normal">
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {editingEvent.date ? (
-                                  format(new Date(editingEvent.date), "PPP p")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
+                                {editingEvent.date ? format(new Date(editingEvent.date), "PPP p") : <span>Pick a date</span>}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
@@ -451,15 +531,7 @@ export default function ManageEventsPage() {
                                 <Input
                                   type="time"
                                   defaultValue={editingEvent.date ? format(new Date(editingEvent.date), "HH:mm") : ""}
-                                  onChange={(e) => {
-                                    const date = new Date(editingEvent.date)
-                                    const [hours, minutes] = e.target.value.split(":").map(Number)
-                                    date.setHours(hours, minutes)
-                                    setEditingEvent({
-                                      ...editingEvent,
-                                      date: date.toISOString(),
-                                    })
-                                  }}
+                                  onChange={(e) => handleTimeSelect(e.target.value, "edit")}
                                 />
                               </div>
                             </PopoverContent>
@@ -469,7 +541,7 @@ export default function ManageEventsPage() {
                           <Label htmlFor="edit-event-location">Location</Label>
                           <Input
                             id="edit-event-location"
-                            value={editingEvent.location}
+                            value={editingEvent.location || ""}
                             onChange={(e) => setEditingEvent({ ...editingEvent, location: e.target.value })}
                           />
                         </div>
@@ -478,7 +550,7 @@ export default function ManageEventsPage() {
                           <Textarea
                             id="edit-event-description"
                             rows={3}
-                            value={editingEvent.description}
+                            value={editingEvent.description || ""}
                             onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
                           />
                         </div>
@@ -487,7 +559,7 @@ export default function ManageEventsPage() {
                           <select
                             id="edit-event-status"
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            value={editingEvent.status}
+                            value={editingEvent.status || "upcoming"}
                             onChange={(e) =>
                               setEditingEvent({
                                 ...editingEvent,
@@ -549,7 +621,7 @@ export default function ManageEventsPage() {
               <AnimatePresence>
                 {filteredEvents.map((event) => (
                   <motion.div
-                    key={event.id}
+                    key={event._id}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
@@ -560,7 +632,7 @@ export default function ManageEventsPage() {
                       <div className="relative">
                         <img
                           src={event.image || "/placeholder.svg"}
-                          alt={event.name}
+                          alt={event.title}
                           className="w-full h-40 object-cover"
                         />
                         <div className="absolute top-2 right-2">
@@ -582,7 +654,7 @@ export default function ManageEventsPage() {
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="text-red-600 dark:text-red-400"
-                                onClick={() => handleDeleteEvent(event.id)}
+                                onClick={() => handleDeleteEvent(event._id)}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete
@@ -590,62 +662,52 @@ export default function ManageEventsPage() {
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-                        <Badge
-                          className={`absolute top-2 left-2 ${
-                            event.status === "upcoming"
-                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
-                              : event.status === "past"
+                        {event.status && (
+                          <Badge
+                            className={`absolute top-2 left-2 ${
+                              event.status === "upcoming"
+                                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
+                                : event.status === "past"
                                 ? "bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-800"
                                 : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800"
-                          }`}
-                        >
-                          {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                        </Badge>
+                            }`}
+                          >
+                            {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                          </Badge>
+                        )}
                       </div>
 
                       <CardHeader className="p-4 pb-0">
-                        <CardTitle className="text-xl">{event.name}</CardTitle>
+                        <CardTitle className="text-xl">{event.title}</CardTitle>
                       </CardHeader>
 
                       <CardContent className="p-4">
                         <div className="space-y-2 text-sm">
                           <div className="flex items-center text-gray-600 dark:text-gray-400">
                             <Calendar className="h-4 w-4 mr-2" />
-                            {format(new Date(event.date), "PPP p")}
+                            {event.date ? format(new Date(event.date), "PPP p") : "No date"}
                           </div>
                           <div className="flex items-center text-gray-600 dark:text-gray-400">
                             <MapPin className="h-4 w-4 mr-2" />
                             {event.location}
                           </div>
-                          <div className="flex items-center text-gray-600 dark:text-gray-400">
-                            <Users className="h-4 w-4 mr-2" />
-                            {event.attendees} attendees
-                          </div>
-                          <p className="text-gray-600 dark:text-gray-400 line-clamp-2 mt-2">{event.description}</p>
+                          {event.attendees !== undefined && (
+                            <div className="flex items-center text-gray-600 dark:text-gray-400">
+                              <Users className="h-4 w-4 mr-2" />
+                              {event.attendees} attendees
+                            </div>
+                          )}
+                          {event.description && (
+                            <p className="text-gray-600 dark:text-gray-400 line-clamp-2 mt-2">{event.description}</p>
+                          )}
                         </div>
                       </CardContent>
-
-                      <div className="p-4 pt-0 flex justify-between">
-                        <Button variant="outline" size="sm" onClick={() => setEditingEvent(event)}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          onClick={() => handleDeleteEvent(event.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                      </div>
                     </Card>
                   </motion.div>
                 ))}
               </AnimatePresence>
 
-              {filteredEvents.length === 0 && (
+              {!isLoading && filteredEvents.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-4 mb-4">
                     <Calendar className="h-8 w-8 text-gray-400" />

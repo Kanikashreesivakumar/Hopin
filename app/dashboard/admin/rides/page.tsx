@@ -19,173 +19,141 @@ import { format } from "date-fns"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import RoleNavbar from "@/components/role-navbar"
 
-// Mock data for rides
-const initialRides = [
-  {
-    id: "1",
-    driverName: "Alex Johnson",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.8,
-    eventName: "Spring Music Festival",
-    eventDate: "2025-04-15T18:00:00",
-    departureTime: "2025-04-15T17:00:00",
-    pickupLocation: "Student Union Building",
-    passengers: 3,
-    maxPassengers: 4,
-    cost: 5.5,
-    status: "upcoming",
-  },
-  {
-    id: "2",
-    driverName: "Samantha Lee",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.9,
-    eventName: "Basketball Championship",
-    eventDate: "2025-04-20T19:30:00",
-    departureTime: "2025-04-20T18:30:00",
-    pickupLocation: "North Campus Parking",
-    passengers: 4,
-    maxPassengers: 4,
-    cost: 4.0,
-    status: "upcoming",
-  },
-  {
-    id: "3",
-    driverName: "Michael Chen",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.7,
-    eventName: "Career Fair",
-    eventDate: "2025-04-22T10:00:00",
-    departureTime: "2025-04-22T09:00:00",
-    pickupLocation: "Engineering Building",
-    passengers: 2,
-    maxPassengers: 3,
-    cost: 3.5,
-    status: "upcoming",
-  },
-  {
-    id: "4",
-    driverName: "Jessica Williams",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.6,
-    eventName: "Spring Music Festival",
-    eventDate: "2025-04-15T18:00:00",
-    departureTime: "2025-04-15T17:15:00",
-    pickupLocation: "Downtown Station",
-    passengers: 3,
-    maxPassengers: 3,
-    cost: 6.0,
-    status: "upcoming",
-  },
-  {
-    id: "5",
-    driverName: "David Kim",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 5.0,
-    eventName: "Hackathon 2025",
-    eventDate: "2025-04-25T08:00:00",
-    departureTime: "2025-04-25T07:15:00",
-    pickupLocation: "Computer Science Building",
-    passengers: 3,
-    maxPassengers: 3,
-    cost: 4.5,
-    status: "upcoming",
-  },
-  {
-    id: "6",
-    driverName: "Emily Johnson",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.8,
-    eventName: "Alumni Networking",
-    eventDate: "2025-03-28T17:00:00",
-    departureTime: "2025-03-28T16:00:00",
-    pickupLocation: "Business School Atrium",
-    passengers: 2,
-    maxPassengers: 4,
-    cost: 5.0,
-    status: "completed",
-  },
-  {
-    id: "7",
-    driverName: "Ryan Patel",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.5,
-    eventName: "Spring Concert",
-    eventDate: "2025-03-15T19:00:00",
-    departureTime: "2025-03-15T18:00:00",
-    pickupLocation: "Music Hall",
-    passengers: 3,
-    maxPassengers: 3,
-    cost: 4.0,
-    status: "completed",
-  },
-  {
-    id: "8",
-    driverName: "Olivia Martinez",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.9,
-    eventName: "Tech Meetup",
-    eventDate: "2025-03-10T18:30:00",
-    departureTime: "2025-03-10T17:45:00",
-    pickupLocation: "Innovation Center",
-    passengers: 2,
-    maxPassengers: 4,
-    cost: 3.5,
-    status: "completed",
-  },
-]
-
 interface Ride {
-  id: string
-  driverName: string
-  driverAvatar: string
-  driverRating: number
-  eventName: string
-  eventDate: string
-  departureTime: string
-  pickupLocation: string
-  passengers: number
-  maxPassengers: number
+  _id: string
+  driverId: {
+    _id: string
+    name: string
+    avatar?: string
+    rating?: number
+  }
+  eventId?: {
+    _id: string
+    title: string
+    date: string | Date
+  }
+  eventName?: string
+  eventDate?: string | Date
+  departureTime: string | Date
+  startLocation: string
+  endLocation: string
+  passengerIds: string[]
+  availableSeats: number
   cost: number
-  status: "upcoming" | "completed" | "cancelled"
+  status: "upcoming" | "completed" | "cancelled" | "inprogress"
 }
 
 export default function ViewAllRidesPage() {
-  const [rides, setRides] = useState<Ride[]>(initialRides)
-  const [filteredRides, setFilteredRides] = useState<Ride[]>(rides)
+  const [rides, setRides] = useState<Ride[]>([])
+  const [filteredRides, setFilteredRides] = useState<Ride[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [activeTab, setActiveTab] = useState("all")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Filter rides based on search term and active tab
-  useEffect(() => {
+  const fetchRides = async () => {
     setIsLoading(true)
-
-    // Simulate API call delay
-    setTimeout(() => {
-      let filtered = rides
-
-      if (searchTerm) {
-        filtered = filtered.filter(
-          (ride) =>
-            ride.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ride.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ride.pickupLocation.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
+    setError(null)
+    try {
+      const response = await fetch("/api/admin/rides")
+      if (!response.ok) {
+        throw new Error("Failed to fetch rides")
       }
-
-      if (activeTab !== "all") {
-        filtered = filtered.filter((ride) => ride.status === activeTab)
+      const result = await response.json()
+      if (result.success) {
+        const mappedRides = result.data.map((rideData: any) => ({
+          _id: rideData._id,
+          driverId: rideData.driverId
+            ? {
+                _id: rideData.driverId._id,
+                name: rideData.driverId.name || "Unknown Driver",
+                avatar: rideData.driverId.avatar,
+                rating: rideData.driverId.rating,
+              }
+            : { _id: "", name: "Unknown Driver" },
+          eventId: rideData.eventId
+            ? {
+                _id: rideData.eventId._id,
+                title: rideData.eventId.title || "Unknown Event",
+                date: rideData.eventId.date,
+              }
+            : undefined,
+          eventName: rideData.eventId?.title || "Unknown Event",
+          eventDate: rideData.eventId?.date || rideData.departureTime,
+          departureTime: rideData.departureTime,
+          startLocation: rideData.startLocation,
+          endLocation: rideData.endLocation,
+          passengerIds: rideData.passengerIds || [],
+          availableSeats: rideData.availableSeats,
+          cost: rideData.cost || 0,
+          status: rideData.status || "upcoming",
+        }))
+        setRides(mappedRides)
+        setFilteredRides(mappedRides)
+      } else {
+        throw new Error(result.error || "Failed to fetch rides")
       }
-
-      setFilteredRides(filtered)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+      console.error("Fetch error:", err)
+    } finally {
       setIsLoading(false)
-    }, 300)
+    }
+  }
+
+  useEffect(() => {
+    fetchRides()
+  }, [])
+
+  useEffect(() => {
+    let filtered = rides
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (ride) =>
+          (ride.driverId.name && ride.driverId.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (ride.eventName && ride.eventName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          ride.startLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ride.endLocation.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    }
+
+    if (activeTab !== "all") {
+      filtered = filtered.filter((ride) => ride.status === activeTab)
+    }
+
+    setFilteredRides(filtered)
   }, [rides, searchTerm, activeTab])
 
   const handleExportData = () => {
-    // In a real app, this would generate a CSV or Excel file
-    alert("Exporting ride data...")
+    console.log("Exporting data:", filteredRides)
+    alert("Exporting ride data... (Check console for data)")
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
+        <RoleNavbar role="admin" userName="Admin User" />
+        <main className="container mx-auto px-4 py-8 text-center">
+          <p>Loading rides...</p>
+        </main>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
+        <RoleNavbar role="admin" userName="Admin User" />
+        <main className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error loading rides</h1>
+          <p className="text-gray-600 dark:text-gray-400">{error}</p>
+          <Button onClick={fetchRides} className="mt-4">
+            Try Again
+          </Button>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -248,61 +216,65 @@ export default function ViewAllRidesPage() {
                     <TableHead>Driver</TableHead>
                     <TableHead>Event</TableHead>
                     <TableHead className="hidden md:table-cell">Departure</TableHead>
-                    <TableHead className="hidden md:table-cell">Pickup Location</TableHead>
-                    <TableHead className="hidden md:table-cell">Passengers</TableHead>
+                    <TableHead className="hidden md:table-cell">Pickup</TableHead>
+                    <TableHead className="hidden lg:table-cell">Destination</TableHead>
+                    <TableHead className="hidden md:table-cell">Seats</TableHead>
                     <TableHead>Cost</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
-                    // Loading skeleton
-                    Array.from({ length: 5 }).map((_, index) => (
-                      <TableRow key={`loading-${index}`}>
-                        {Array.from({ length: 8 }).map((_, cellIndex) => (
-                          <TableCell key={`loading-cell-${cellIndex}`}>
-                            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : filteredRides.length > 0 ? (
+                  {filteredRides.length > 0 ? (
                     filteredRides.map((ride) => (
-                      <TableRow key={ride.id}>
+                      <TableRow key={ride._id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={ride.driverAvatar || "/placeholder.svg"} alt={ride.driverName} />
-                              <AvatarFallback>{ride.driverName.charAt(0)}</AvatarFallback>
+                              <AvatarImage src={ride.driverId.avatar || "/placeholder.svg"} alt={ride.driverId.name} />
+                              <AvatarFallback>{ride.driverId.name ? ride.driverId.name.charAt(0) : "?"}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-medium">{ride.driverName}</div>
-                              <div className="text-xs text-gray-500 flex items-center">{ride.driverRating} ★</div>
+                              <div className="font-medium">{ride.driverId.name}</div>
+                              {ride.driverId.rating !== undefined && (
+                                <div className="text-xs text-gray-500 flex items-center">
+                                  {ride.driverId.rating.toFixed(1)} ★
+                                </div>
+                              )}
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="font-medium">{ride.eventName}</div>
-                          <div className="text-xs text-gray-500">{format(new Date(ride.eventDate), "MMM d, yyyy")}</div>
+                          <div className="text-xs text-gray-500">
+                            {ride.eventDate ? format(new Date(ride.eventDate), "MMM d, yyyy") : "N/A"}
+                          </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center">
                             <Clock className="h-4 w-4 mr-1 text-gray-500" />
-                            <span>{format(new Date(ride.departureTime), "h:mm a")}</span>
+                            <span>
+                              {ride.departureTime ? format(new Date(ride.departureTime), "h:mm a") : "N/A"}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center">
                             <MapPin className="h-4 w-4 mr-1 text-gray-500" />
-                            <span>{ride.pickupLocation}</span>
+                            <span>{ride.startLocation}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          <div className="flex items-center">
+                            <MapPin className="h-4 w-4 mr-1 text-gray-500" />
+                            <span>{ride.endLocation}</span>
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center">
                             <Users className="h-4 w-4 mr-1 text-gray-500" />
                             <span>
-                              {ride.passengers}/{ride.maxPassengers}
+                              {ride.passengerIds.length}/{ride.availableSeats + ride.passengerIds.length}
                             </span>
                           </div>
                         </TableCell>
@@ -313,8 +285,10 @@ export default function ViewAllRidesPage() {
                               ride.status === "upcoming"
                                 ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                                 : ride.status === "completed"
-                                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                  : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                : ride.status === "inprogress"
+                                ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                             }
                           >
                             {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
@@ -352,7 +326,7 @@ export default function ViewAllRidesPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} className="h-24 text-center">
+                      <TableCell colSpan={9} className="h-24 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <Car className="h-8 w-8 text-gray-400 mb-2" />
                           <p className="text-gray-500 dark:text-gray-400">No rides found</p>
@@ -408,29 +382,40 @@ export default function ViewAllRidesPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {Array.from(new Set(rides.map((ride) => ride.eventName)))
+                {Object.entries(
+                  rides.reduce((acc, ride) => {
+                    const name = ride.eventName || "Unknown Event"
+                    if (!acc[name]) {
+                      acc[name] = { count: 0, passengers: 0 }
+                    }
+                    acc[name].count++
+                    acc[name].passengers += ride.passengerIds.length
+                    return acc
+                  }, {} as Record<string, { count: number; passengers: number }>)
+                )
+                  .sort(([, a], [, b]) => b.count - a.count)
                   .slice(0, 3)
-                  .map((eventName) => {
-                    const eventRides = rides.filter((ride) => ride.eventName === eventName)
-                    const totalPassengers = eventRides.reduce((sum, ride) => sum + ride.passengers, 0)
-
-                    return (
-                      <div
-                        key={eventName}
-                        className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
-                      >
-                        <div>
-                          <div className="font-medium">{eventName}</div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {eventRides.length} rides • {totalPassengers} passengers
-                          </div>
+                  .map(([eventName, stats]) => (
+                    <div
+                      key={eventName}
+                      className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
+                    >
+                      <div>
+                        <div className="font-medium">{eventName}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {stats.count} rides • {stats.passengers} passengers
                         </div>
-                        <Button variant="ghost" size="sm" className="text-hopin-orange hover:bg-hopin-orange/10">
-                          View Details
-                        </Button>
                       </div>
-                    )
-                  })}
+                      <Button variant="ghost" size="sm" className="text-hopin-orange hover:bg-hopin-orange/10">
+                        View Details
+                      </Button>
+                    </div>
+                  ))}
+                {rides.length === 0 && !isLoading && (
+                  <p className="text-center text-gray-500 dark:text-gray-400">
+                    No ride data available for popular events.
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
