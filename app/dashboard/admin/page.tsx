@@ -23,6 +23,7 @@ import {
 } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
 import { generateEventDescription } from "@/utils/gemini"
+import AnalyticsChart from "@/components/analytics-chart"
 
 export default function AdminDashboard() {
   const [userName] = useState("Admin User")
@@ -90,10 +91,10 @@ export default function AdminDashboard() {
 
   const handleGenerateDescription = async (event: any) => {
     try {
-      setIsLoading(true); // Add loading state
+      setIsLoading(true); 
       const description = await generateEventDescription({
         title: event.title,
-        type: event.type || 'Event', // Provide default type if not available
+        type: event.type || 'Event', 
         location: event.location
       });
       
@@ -342,11 +343,20 @@ export default function AdminDashboard() {
               </Button>
             </div>
 
-            <div className="h-64 bg-gray-50 dark:bg-gray-800/50 rounded-lg flex items-center justify-center mb-6">
-              <div className="text-center">
-                <BarChart3 className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">Analytics chart will be displayed here</p>
-              </div>
+            {/* Add time period selector before the chart */}
+            <div className="flex items-center gap-4 mb-4">
+              <select 
+                className="bg-transparent border border-hopin-gray/30 rounded-md px-3 py-1 text-sm"
+                defaultValue="year"
+              >
+                <option value="month">Last Month</option>
+                <option value="quarter">Last Quarter</option>
+                <option value="year">Last Year</option>
+              </select>
+            </div>
+
+            <div className="h-64 rounded-lg mb-6">
+              <AnalyticsChart />
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
