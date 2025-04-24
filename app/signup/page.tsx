@@ -9,28 +9,18 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import {
-  AlertCircle,
-  Check,
-  Eye,
-  EyeOff,
-  Github,
-  Loader2,
-  Lock,
-  LogIn,
-  Mail,
-  Shield,
-  User,
-  UserPlus,
-} from "lucide-react"
+import { AlertCircle, Car, Check, Eye, EyeOff, Github, Loader2, Lock, Mail, Shield, User, UserPlus } from "lucide-react"
 import Logo from "@/components/logo"
+import { ThemeToggle } from "@/components/theme-toggle"
 
-export default function AuthPage() {
+type UserRole = "driver" | "passenger" | null
+
+export default function SignupPage() {
   const router = useRouter()
+  const [selectedRole, setSelectedRole] = useState<UserRole>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -38,10 +28,17 @@ export default function AuthPage() {
   const [name, setName] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [passwordStrength, setPasswordStrength] = useState(0)
+  const [vehicleInfo, setVehicleInfo] = useState({
+    make: "",
+    model: "",
+    year: "",
+    licensePlate: "",
+    color: "",
+  })
+  const [agreeToTerms, setAgreeToTerms] = useState(false)
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -63,89 +60,88 @@ export default function AuthPage() {
     checkPasswordStrength(newPassword)
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
-
-    if (!email || !password) {
-      setError("Please fill in all fields")
-      return
-    }
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address")
-      return
-    }
-    setIsLoading(true)
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      })
-      const data = await res.json()
-      if (!data.success) {
-        setError(data.error || "Login failed")
-        setIsLoading(false)
-        return
-      }
-      setSuccess("Login successful! Redirecting...")
-      // Store JWT in localStorage or cookie (for demo, localStorage)
-      localStorage.setItem("token", data.token)
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 1500)
-    } catch (err) {
-      setError("Login failed. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    setSuccess(null)
 
-    if (!name || !email || !password || !confirmPassword) {
-      setError("Please fill in all fields")
+    // Validate inputs
+    if (!selectedRole || !name || !email || !password || !confirmPassword) {
+      setError("Please fill in all required fields")
       return
     }
+
     if (!validateEmail(email)) {
       setError("Please enter a valid email address")
       return
     }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match")
       return
     }
+
     if (passwordStrength < 3) {
       setError("Please use a stronger password")
       return
     }
-    setIsLoading(true)
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      })
-      const data = await res.json()
-      if (!data.success) {
-        setError(data.error || "Signup failed")
-        setIsLoading(false)
+
+    if (selectedRole === "driver") {
+      // Validate vehicle information for drivers
+      const { make, model, year, licensePlate } = vehicleInfo
+      if (!make || !model || !year || !licensePlate) {
+        setError("Please fill in all vehicle information")
         return
       }
-      setSuccess("Account created successfully! Redirecting...")
-      localStorage.setItem("token", data.token)
-      setTimeout(() => {
-        router.push("/profile")
-      }, 1500)
-    } catch (err) {
-      setError("Signup failed. Please try again.")
-    } finally {
-      setIsLoading(false)
     }
+
+    if (!agreeToTerms) {
+      setError("You must agree to the terms and conditions")
+      return
+    }
+
+    setIsLoading(true)
+
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false)
+      setSuccess("Account created successfully! Redirecting...")
+
+      // Redirect to appropriate dashboard based on role
+      setTimeout(() => {
+        router.push(`/dashboard/${selectedRole}`)
+      }, 1500)
+    }, 2000)
+  }
+
+  const roleCards = [
+    {
+      role: "driver",
+      title: "Driver",
+      icon: <Car className="h-12 w-12 text-hopin-orange" />,
+      description: "Offer rides to events and earn",
+    },
+    {
+      role: "passenger",
+      title: "Passenger",
+      icon: <User className="h-12 w-12 text-hopin-orange" />,
+      description: "Find and book rides to events",
+    },
+    
+  ]
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
   }
 
   return (
@@ -155,7 +151,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 bg-gradient-to-br from-green-600 via-violet-600 to-pink-500"
+          className="absolute inset-0 bg-orange"
         />
 
         <div className="relative z-20 flex items-center text-lg font-medium">
@@ -173,7 +169,7 @@ export default function AuthPage() {
               "HOPIN has completely transformed how our students get to campus events. It's made ride-sharing simple,
               affordable, and fun!"
             </p>
-            <footer className="text-sm">Sofia Davis, Student Council President</footer>
+            <footer className="text-sm">Student Council President</footer>
           </blockquote>
         </motion.div>
 
@@ -181,15 +177,19 @@ export default function AuthPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.1 }}
           transition={{ duration: 1 }}
-          className="absolute top-0 left-0 z-10 h-full w-full bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover opacity-10"
+          className="absolute top-0 left-0 z-10 h-full w-full bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover opacity-100"
         />
       </div>
 
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] lg:w-[400px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Welcome to HOPIN</h1>
-            <p className="text-sm text-muted-foreground">Sign in to your account or create a new one</p>
+            <h1 className="text-2xl font-semibold tracking-tight">Create your HOPIN account</h1>
+            <p className="text-sm text-muted-foreground">Sign up to start sharing rides to events</p>
+          </div>
+
+          <div className="absolute top-4 right-4">
+            <ThemeToggle />
           </div>
 
           {error && (
@@ -211,124 +211,78 @@ export default function AuthPage() {
           )}
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <Card>
-                  <form onSubmit={handleLogin}>
-                    <CardHeader>
-                      <CardTitle>Login</CardTitle>
-                      <CardDescription>Enter your email and password to access your account</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="name@example.com"
-                            className="pl-9"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                          />
-                        </div>
+            <Card>
+              <form onSubmit={handleSignup}>
+                <CardHeader>
+                  <CardTitle>Sign Up</CardTitle>
+                  <CardDescription>Enter your information to create a new account</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {!selectedRole ? (
+                    <>
+                      <div className="text-center mb-2">
+                        <h3 className="text-lg font-medium">Select your role</h3>
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="password">Password</Label>
-                          <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
-                            Forgot password?
-                          </Link>
-                        </div>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                          <Input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="••••••••"
-                            className="pl-9"
-                            value={password}
-                            onChange={handlePasswordChange}
-                            required
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-10 w-10"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="remember"
-                          checked={rememberMe}
-                          onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                        />
-                        <label
-                          htmlFor="remember"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Remember me
-                        </label>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-orange to-emerald-600 hover:from-orange hover:to-emerald-700"
-                        disabled={isLoading}
+                      <motion.div
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="grid grid-cols-1 gap-4"
                       >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Signing in...
-                          </>
-                        ) : (
-                          <>
-                            <LogIn className="mr-2 h-4 w-4" />
-                            Sign In
-                          </>
-                        )}
-                      </Button>
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                        {roleCards.map((card) => (
+                          <motion.div
+                            key={card.role}
+                            variants={item}
+                            whileHover={{ y: -5, scale: 1.02 }}
+                            className={`bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm cursor-pointer border-2 transition-all duration-300 ${
+                              selectedRole === card.role
+                                ? "border-hopin-orange animate-glow"
+                                : "border-transparent hover:border-hopin-orange/50"
+                            }`}
+                            onClick={() => setSelectedRole(card.role as UserRole)}
+                          >
+                            <div className="flex items-center">
+                              <div className="bg-hopin-orange/10 p-3 rounded-full mr-4">{card.icon}</div>
+                              <div>
+                                <h3 className="text-lg font-semibold">{card.title}</h3>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm">{card.description}</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center mb-4">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedRole(null)}
+                          className="text-sm text-hopin-orange hover:underline flex items-center"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="mr-1"
+                          >
+                            <path d="m15 18-6-6 6-6" />
+                          </svg>
+                          Change role
+                        </button>
+                        <div className="ml-auto flex items-center">
+                          <div className="bg-hopin-orange/10 text-hopin-orange rounded-md px-2 py-1 text-xs font-medium">
+                            {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}
+                          </div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                       
-                        <Button variant="outline" type="button">
-                          <Mail className="mr-2 h-4 w-4" />
-                          Google
-                        </Button>
-                      </div>
-                    </CardFooter>
-                  </form>
-                </Card>
-              </TabsContent>
 
-              <TabsContent value="signup">
-                <Card>
-                  <form onSubmit={handleSignup}>
-                    <CardHeader>
-                      <CardTitle>Create an account</CardTitle>
-                      <CardDescription>Enter your information to create a new account</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
                         <div className="relative">
@@ -343,6 +297,7 @@ export default function AuthPage() {
                           />
                         </div>
                       </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="signup-email">Email</Label>
                         <div className="relative">
@@ -358,6 +313,7 @@ export default function AuthPage() {
                           />
                         </div>
                       </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="signup-password">Password</Label>
                         <div className="relative">
@@ -411,6 +367,7 @@ export default function AuthPage() {
                           </div>
                         )}
                       </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="confirm-password">Confirm Password</Label>
                         <div className="relative">
@@ -438,8 +395,16 @@ export default function AuthPage() {
                           <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
                         )}
                       </div>
+
+                     
+
                       <div className="flex items-center space-x-2">
-                        <Checkbox id="terms" required />
+                        <Checkbox
+                          id="terms"
+                          checked={agreeToTerms}
+                          onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                          required
+                        />
                         <label
                           htmlFor="terms"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -450,25 +415,32 @@ export default function AuthPage() {
                           </Link>
                         </label>
                       </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
-                      <Button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating account...
-                          </>
-                        ) : (
-                          <>
-                            <UserPlus className="mr-2 h-4 w-4" />
-                            Create Account
-                          </>
-                        )}
-                      </Button>
+                    </>
+                  )}
+                </CardContent>
+                <CardFooter className="flex flex-col space-y-4">
+                  {selectedRole && (
+                    <Button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Create Account
+                        </>
+                      )}
+                    </Button>
+                  )}
+
+                  {selectedRole && (
+                    <>
                       <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                           <span className="w-full border-t" />
@@ -478,16 +450,24 @@ export default function AuthPage() {
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
+                       
                         <Button variant="outline" type="button">
                           <Mail className="mr-2 h-4 w-4" />
                           Google
                         </Button>
                       </div>
-                    </CardFooter>
-                  </form>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                    </>
+                  )}
+
+                  <div className="text-center text-sm">
+                    Already have an account?{" "}
+                    <Link href="/login" className="text-hopin-orange hover:underline">
+                      Sign in
+                    </Link>
+                  </div>
+                </CardFooter>
+              </form>
+            </Card>
           </motion.div>
 
           <div className="flex items-center justify-center">

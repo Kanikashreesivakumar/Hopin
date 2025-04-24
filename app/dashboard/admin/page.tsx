@@ -22,12 +22,15 @@ import {
   Users,
 } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
+import { generateEventDescription } from "@/utils/gemini"
 
 export default function AdminDashboard() {
   const [userName] = useState("Admin User")
   const [userAvatar] = useState("/placeholder.svg?height=64&width=64")
 
-  // Sample platform stats
+  const [isLoading, setIsLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   const platformStats = {
     totalUsers: 1248,
     totalRides: 856,
@@ -35,7 +38,7 @@ export default function AdminDashboard() {
     activeRides: 18,
   }
 
-  // Sample upcoming events data
+  
   const upcomingEvents = [
     {
       id: 1,
@@ -84,6 +87,28 @@ export default function AdminDashboard() {
       status: "upcoming",
     },
   ]
+
+  const handleGenerateDescription = async (event: any) => {
+    try {
+      setIsLoading(true); // Add loading state
+      const description = await generateEventDescription({
+        title: event.title,
+        type: event.type || 'Event', // Provide default type if not available
+        location: event.location
+      });
+      
+      if (description) {
+        // Update event description in your state/database
+        console.log("Generated description:", description);
+        // Show success message
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Show error message to user
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

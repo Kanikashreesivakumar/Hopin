@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
 import RoleNavbar from "@/components/role-navbar"
 import GoogleMaps from "@/components/google-maps"
-import type { LatLngLiteral } from "@googlemaps/js-api-loader"
+type LatLngLiteral = { lat: number; lng: number }
 
 export default function AddEventPage() {
   const router = useRouter()

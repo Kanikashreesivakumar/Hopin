@@ -163,6 +163,11 @@ export default function Home() {
           <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
             <Link href="/login">Login</Link>
           </Button>
+
+          <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+      
         </div>
       </header>
 
@@ -359,14 +364,18 @@ export default function Home() {
       <section ref={eventsRef} className="py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
+          
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={isEventsInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5 }}
+             
               className="text-3xl md:text-4xl font-bold mb-4"
-            >
-              Upcoming <span className="text-hopin-orange">Events</span>
+            >              
+            Upcoming <span className="text-hopin-orange">Events</span>
             </motion.h2>
+
+        
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={isEventsInView ? { opacity: 1, y: 0 } : {}}
@@ -409,10 +418,7 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-hopin-orange font-medium">12 rides available</span>
-                    <Button variant="ghost" size="sm" className="text-hopin-orange hover:bg-hopin-orange/10">
-                      View Details
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
+                   
                   </div>
                 </div>
               </motion.div>
@@ -421,13 +427,12 @@ export default function Home() {
 
           <div className="text-center mt-10">
             <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-              <Link href="/events">View All Events</Link>
+              <Link href="/login">View All Events</Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Google Maps Integration Section */}
       <section ref={mapRef} className="py-20 bg-gray-50 dark:bg-gray-800/50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -456,23 +461,22 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md h-80 relative overflow-hidden">
-                {/* Map Placeholder */}
+                
                 <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700">
-                  <div className="w-full h-full bg-[url('/placeholder.svg?height=400&width=600')] bg-cover bg-center"></div>
+                  <div className="w-full h-full bg-[url('/loclogo.jpg?height=400&width=600')] bg-cover bg-center"></div>
 
-                  {/* Route Line */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <svg width="80%" height="60%" viewBox="0 0 100 60" className="overflow-visible">
                       <path
                         d="M10,30 Q30,10 50,30 Q70,50 90,30"
                         fill="none"
-                        stroke="#FFA500"
+                        stroke="black"
                         strokeWidth="3"
                         strokeDasharray="5,3"
                         className="animate-pulse"
                       />
-                      <circle cx="10" cy="30" r="4" fill="#FFA500" />
-                      <circle cx="90" cy="30" r="4" fill="#FFA500" />
+                      <circle cx="10" cy="30" r="4" fill="white" />
+                      <circle cx="90" cy="30" r="4" fill="white" />
                     </svg>
                   </div>
                 </div>
@@ -689,93 +693,84 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-1">
               <Logo />
-              <p className="mt-4 text-gray-600 dark:text-gray-400 text-sm">
+              <p className="mt-4 text-gray-600 dark:text-gray-400 text-sm hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors">
                 The smart way to share rides to events. Save money, reduce emissions, and make connections.
               </p>
             </div>
 
+            
+
+            
             <div className="md:col-span-1">
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <h3 className="text-lg font-semibold mb-4">Features</h3>
               <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
+                <li
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    Home
-                  </a>
+                    Map integration
+                
                 </li>
-                <li>
-                  <a
-                    href="#"
+                <li
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    About Us
-                  </a>
+                   Cost splitting
+                 
                 </li>
-                <li>
-                  <a
-                    href="#"
+                <li
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    How It Works
-                  </a>
+                    AI Chatbot
+                  
                 </li>
-                <li>
-                  <a
-                    href="#"
+                <li
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    Events
-                  </a>
+                    Eco friendly drive
+                  
                 </li>
               </ul>
             </div>
-
             <div className="md:col-span-1">
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
+              <h3 className="text-lg font-semibold mb-4">Login</h3>
               <ul className="space-y-2">
                 <li>
                   <a
-                    href="#"
+                    href="/login"
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    Terms of Service
+                   Admin
                   </a>
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/login"
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    Privacy Policy
+                   Passenger
                   </a>
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/login"
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
-                    Cookie Policy
+                    Driver
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
-                  >
-                    GDPR
-                  </a>
-                </li>
+                
               </ul>
             </div>
 
             <div className="md:col-span-1">
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <ul className="space-y-2">
-                <li className="text-gray-600 dark:text-gray-400">support@hopin.com</li>
-                <li className="text-gray-600 dark:text-gray-400">+1 (555) 123-4567</li>
-                <li className="text-gray-600 dark:text-gray-400">123 Tech Street, San Francisco, CA 94107</li>
+                <li >
+               <a href="mailto:kanikashreesivakumar16@gmail.com" className="text-black dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors">hopin@gmail.com</a>
+                </li>
+                <li>
+                  <a href="phone:+917418761589" className="text-black dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors">+19 7418761589</a>
+                  </li>
+                <li className="text-black dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors">3rd floor, B-block, Excel institutions , komarapalayam, tamilnadu </li>
               </ul>
             </div>
           </div>

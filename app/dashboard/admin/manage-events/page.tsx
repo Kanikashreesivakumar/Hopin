@@ -33,6 +33,60 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import RoleNavbar from "@/components/role-navbar"
 
+// Mock data for events
+const initialEvents = [
+  {
+    id: "1",
+    name: "Spring Music Festival",
+    date: "2025-04-15T18:00:00",
+    location: "Student Union Building",
+    description: "Annual music festival featuring student bands and performers.",
+    attendees: 120,
+    image: "/placeholder.svg?height=200&width=400",
+    status: "upcoming",
+  },
+  {
+    id: "2",
+    name: "Basketball Championship",
+    date: "2025-04-20T19:30:00",
+    location: "University Sports Center",
+    description: "Final match of the inter-college basketball tournament.",
+    attendees: 85,
+    image: "/placeholder.svg?height=200&width=400",
+    status: "upcoming",
+  },
+  {
+    id: "3",
+    name: "Career Fair",
+    date: "2025-04-22T10:00:00",
+    location: "Engineering Building",
+    description: "Connect with potential employers and explore career opportunities.",
+    attendees: 200,
+    image: "/placeholder.svg?height=200&width=400",
+    status: "upcoming",
+  },
+  {
+    id: "4",
+    name: "Hackathon 2025",
+    date: "2025-04-25T08:00:00",
+    location: "Computer Science Building",
+    description: "24-hour coding competition with prizes for the best projects.",
+    attendees: 75,
+    image: "/placeholder.svg?height=200&width=400",
+    status: "upcoming",
+  },
+  {
+    id: "5",
+    name: "Alumni Networking",
+    date: "2025-03-28T17:00:00",
+    location: "Business School Atrium",
+    description: "Network with successful alumni and learn from their experiences.",
+    attendees: 50,
+    image: "/placeholder.svg?height=200&width=400",
+    status: "past",
+  },
+]
+
 interface Event {
   _id: string
   title: string
