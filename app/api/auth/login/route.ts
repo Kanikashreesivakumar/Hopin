@@ -18,6 +18,6 @@ export async function POST(req: NextRequest) {
   if (!valid) {
     return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
   }
-  const token = signJwt({ userId: user._id, email: user.email, name: user.name });
-  return NextResponse.json({ success: true, token, user: { id: user._id, name: user.name, email: user.email } });
+  const token = signJwt({ userId: user._id, email: user.email, name: user.name, role: user.role });
+  return NextResponse.json({ success: true, token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
 }
