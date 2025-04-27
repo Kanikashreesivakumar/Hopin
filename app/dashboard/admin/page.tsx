@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Clock,
   Download,
+  Loader2,  // Add this
   MapPin,
   Plus,
   RefreshCw,
@@ -23,6 +24,9 @@ import {
 } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
 import { generateEventDescription } from "@/utils/gemini"
+import AnalyticsChart from "@/components/analytics-chart"
+import { exportAnalytics } from "@/utils/exportAnalytics";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function AdminDashboard() {
   const [userName] = useState("Admin User")
@@ -90,25 +94,50 @@ export default function AdminDashboard() {
 
   const handleGenerateDescription = async (event: any) => {
     try {
-      setIsLoading(true); // Add loading state
+      setIsLoading(true); 
       const description = await generateEventDescription({
         title: event.title,
-        type: event.type || 'Event', // Provide default type if not available
+        type: event.type || 'Event', 
         location: event.location
       });
       
       if (description) {
-        // Update event description in your state/database
+        
         console.log("Generated description:", description);
-        // Show success message
+      
       }
     } catch (error) {
       console.error("Error:", error);
-      // Show error message to user
+      
     } finally {
       setIsLoading(false);
     }
   }
+
+  const { toast } = useToast();
+  const [timeFrame, setTimeFrame] = useState("year");
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await exportAnalytics(timeFrame);
+      toast({
+        title: "Export Successful",
+        description: "Analytics data has been downloaded",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Failed",
+        description: error instanceof Error ? error.message : "Failed to export analytics data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -336,17 +365,41 @@ export default function AdminDashboard() {
           <Card className="hopin-card">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">Platform Analytics</h2>
-              <Button variant="outline" size="sm" className="border-hopin-gray/30">
-                <Download className="h-4 w-4 mr-2" />
-                Export
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-hopin-gray/30"
+                onClick={handleExport}
+                disabled={isExporting}
+              >
+                {isExporting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </>
+                )}
               </Button>
             </div>
 
-            <div className="h-64 bg-gray-50 dark:bg-gray-800/50 rounded-lg flex items-center justify-center mb-6">
-              <div className="text-center">
-                <BarChart3 className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">Analytics chart will be displayed here</p>
-              </div>
+            <div className="flex items-center gap-4 mb-4">
+              <select 
+                className="bg-transparent border border-hopin-gray/30 rounded-md px-3 py-1 text-sm"
+                value={timeFrame}
+                onChange={(e) => setTimeFrame(e.target.value)}
+              >
+                <option value="month">Last Month</option>
+                <option value="quarter">Last Quarter</option>
+                <option value="year">Last Year</option>
+              </select>
+            </div>
+
+            <div className="h-64 rounded-lg mb-6">
+              <AnalyticsChart />
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

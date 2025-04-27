@@ -5,13 +5,14 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import AIChatbot from "@/components/ai-chatbot"
 import { AuthProvider } from "@/hooks/AuthContext"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "HOPIN - AI-Powered Event Ride-Sharing",
   description: "Find your next event ride with HOPIN",
-    generator: 'v0.dev'
+  
 }
 
 export default function RootLayout({
@@ -31,6 +32,7 @@ export default function RootLayout({
             <AIChatbot />
           </ThemeProvider>
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   )
