@@ -396,7 +396,67 @@ export default function SignupPage() {
                         )}
                       </div>
 
-                     
+                      {selectedRole === "driver" && (
+                        <div className="space-y-2 rounded-lg border p-4 bg-muted/50">
+                          <h4 className="font-semibold text-base mb-2 text-hopin-orange">Vehicle Information</h4>
+                          <div className="grid grid-cols-1 gap-3">
+                            <div>
+                              <Label htmlFor="vehicle-make">Make</Label>
+                              <Input
+                                id="vehicle-make"
+                                placeholder="e.g. Toyota"
+                                value={vehicleInfo.make}
+                                onChange={e => setVehicleInfo({ ...vehicleInfo, make: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="vehicle-model">Model</Label>
+                              <Input
+                                id="vehicle-model"
+                                placeholder="e.g. Corolla"
+                                value={vehicleInfo.model}
+                                onChange={e => setVehicleInfo({ ...vehicleInfo, model: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label htmlFor="vehicle-year">Year</Label>
+                                <Input
+                                  id="vehicle-year"
+                                  placeholder="e.g. 2020"
+                                  type="number"
+                                  min="1900"
+                                  max={new Date().getFullYear()}
+                                  value={vehicleInfo.year}
+                                  onChange={e => setVehicleInfo({ ...vehicleInfo, year: e.target.value })}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="vehicle-color">Color</Label>
+                                <Input
+                                  id="vehicle-color"
+                                  placeholder="e.g. Red"
+                                  value={vehicleInfo.color}
+                                  onChange={e => setVehicleInfo({ ...vehicleInfo, color: e.target.value })}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <Label htmlFor="vehicle-license">License Plate</Label>
+                              <Input
+                                id="vehicle-license"
+                                placeholder="e.g. ABC-1234"
+                                value={vehicleInfo.licensePlate}
+                                onChange={e => setVehicleInfo({ ...vehicleInfo, licensePlate: e.target.value })}
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -441,17 +501,16 @@ export default function SignupPage() {
 
                   {selectedRole && (
                     <>
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
+                      <div className="relative flex flex-col items-center justify-center w-full">
+                        <div className="relative w-full flex items-center justify-center">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                          </div>
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                       
-                        <Button variant="outline" type="button">
+                        <Button variant="outline" type="button" className="mt-4 w-full flex items-center justify-center">
                           <Mail className="mr-2 h-4 w-4" />
                           Google
                         </Button>

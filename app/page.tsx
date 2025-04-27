@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { motion, useInView } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Car, ChevronRight, MapPin, MessageCircle, User, Key } from "lucide-react"
 import Logo from "@/components/logo"
 import * as THREE from "three"
+import CostSplitCalculator from "@/components/cost-split-calculator"
 
 export default function Home() {
   const howItWorksRef = useRef(null)
@@ -121,37 +122,26 @@ export default function Home() {
     }
   }, [])
 
-  // Sample events data
-  const events = [
-    {
-      id: 1,
-      title: "Summer Music Festival",
-      date: "June 15, 2023",
-      location: "Central Park",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: 2,
-      title: "Tech Conference 2023",
-      date: "July 10, 2023",
-      location: "Convention Center",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: 3,
-      title: "Food & Wine Expo",
-      date: "August 5, 2023",
-      location: "Downtown Plaza",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: 4,
-      title: "Art Gallery Opening",
-      date: "August 20, 2023",
-      location: "Modern Art Museum",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-  ]
+  // Fetch events from API
+  const [events, setEvents] = useState<any[]>([]);
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const res = await fetch("/api/dashboard");
+        const data = await res.json();
+        if (data.events) {
+          setEvents(data.events.map((event: any) => ({
+            ...event,
+            id: event._id,
+            title: event.name, // for compatibility with old code
+          })));
+        }
+      } catch (err) {
+        // Optionally handle error
+      }
+    }
+    fetchEvents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -594,74 +584,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="max-w-xl mx-auto"
           >
-            <Card className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Fuel Cost (₹)</label>
-                    <input
-                      type="number"
-                      className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-hopin-orange focus:border-hopin-orange"
-                      placeholder="500"
-                      defaultValue="500"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Distance (km)</label>
-                    <input
-                      type="number"
-                      className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-hopin-orange focus:border-hopin-orange"
-                      placeholder="25"
-                      defaultValue="25"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Number of Passengers
-                  </label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="6"
-                    defaultValue="3"
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-hopin-orange"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>1</span>
-                    <span>2</span>
-                    <span>3</span>
-                    <span>4</span>
-                    <span>5</span>
-                    <span>6</span>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <div className="bg-hopin-orange/10 rounded-lg p-6 text-center">
-                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Cost per Person</div>
-                    <div className="text-3xl font-bold text-hopin-orange">₹ 166.67</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      Based on equal split among 3 passengers
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 text-center text-sm">
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                    <div className="text-gray-600 dark:text-gray-400">Cost per km</div>
-                    <div className="font-semibold">₹ 20.00</div>
-                  </div>
-
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                    <div className="text-gray-600 dark:text-gray-400">Total Savings</div>
-                    <div className="font-semibold text-green-600">₹ 333.33</div>
-                  </div>
-                </div>
-              </div>
-            </Card>
+            <CostSplitCalculator />
           </motion.div>
         </div>
       </section>

@@ -16,14 +16,16 @@ interface Message {
 
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content: "👋 Hi there! I'm HOPIN Assistant. How can I help you today?",
-      sender: "bot",
-      timestamp: new Date(),
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>(
+    [
+      {
+        id: "1",
+        content: "👋 Hi there! I'm HOPIN Assistant. How can I help you today?",
+        sender: "bot",
+        timestamp: new Date(),
+      },
+    ]
+  )
   const [inputValue, setInputValue] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -47,47 +49,12 @@ export default function AIChatbot() {
     setIsTyping(true)
 
     try {
-      if (!process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
-        throw new Error("Missing Gemini API key");
-      }
-
-      const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
+      const response = await fetch('/api/ai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`
         },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are HOPIN Assistant, a helpful and friendly AI chatbot for a carpooling and ride-sharing platform. Help users with ride-related queries, booking assistance, and general platform guidance. Current user query: ${inputValue}`
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1000,
-          },
-          safetySettings: [
-            {
-              category: "HARM_CATEGORY_HARASSMENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_HATE_SPEECH",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            }
-          ]
-        })
+        body: JSON.stringify({ message: inputValue }),
       });
 
       if (!response.ok) {
@@ -95,13 +62,7 @@ export default function AIChatbot() {
       }
 
       const data = await response.json();
-      
-      if (!data.candidates || data.candidates.length === 0) {
-        throw new Error('No response generated');
-      }
-
-      const text = data.candidates[0]?.content?.parts?.[0]?.text || "I apologize, but I couldn't process that request.";
-      
+      const text = data.content || "I apologize, but I couldn't process that request.";
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: text,
@@ -128,6 +89,32 @@ export default function AIChatbot() {
       e.preventDefault()
       handleSendMessage()
     }
+  }
+
+  // Helper to format bot message: *text* => bold heading, rest as paragraph
+  function formatBotMessage(text: string) {
+    // Split by newlines for paragraphs
+    return text.split(/\n+/).map((line, idx) => {
+      // Replace all *text* with bold heading style
+      const parts = [];
+      let lastIndex = 0;
+      const regex = /\*(.+?)\*/g;
+      let match;
+      let key = 0;
+      while ((match = regex.exec(line)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(<span key={key++}>{line.slice(lastIndex, match.index)}</span>);
+        }
+        parts.push(
+          <span key={key++} className="font-bold text-base text-hopin-orange">{match[1]}</span>
+        );
+        lastIndex = regex.lastIndex;
+      }
+      if (lastIndex < line.length) {
+        parts.push(<span key={key++}>{line.slice(lastIndex)}</span>);
+      }
+      return <div key={idx} className="mb-1">{parts}</div>;
+    });
   }
 
   return (
@@ -158,7 +145,7 @@ export default function AIChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 w-80 sm:w-96 h-[500px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden border border-hopin-gray/20 dark:border-hopin-gray/10"
+            className="fixed bottom-6 right-6 w-80 sm:w-96 h-[550px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden border border-hopin-gray/20 dark:border-hopin-gray/10"
           >
             {/* Chat Header */}
             <div className="bg-hopin-orange text-white p-4 flex justify-between items-center">
@@ -201,7 +188,11 @@ export default function AIChatbot() {
                         : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     }`}
                   >
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-sm">
+                      {message.sender === "bot"
+                        ? formatBotMessage(message.content)
+                        : message.content}
+                    </p>
                     <div
                       className={`text-xs mt-1 ${
                         message.sender === "user" ? "text-white/70" : "text-gray-500 dark:text-gray-400"
