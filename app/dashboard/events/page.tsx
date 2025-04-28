@@ -43,7 +43,7 @@ const initialEvents = [
     description: "Annual music festival featuring student bands and performers.",
     attendees: 120,
     image: "/placeholder.svg?height=200&width=400",
-    status: "upcoming",
+    status: "upcoming" as "upcoming",
   },
   {
     id: "2",
@@ -83,7 +83,7 @@ const initialEvents = [
     description: "Network with successful alumni and learn from their experiences.",
     attendees: 50,
     image: "/placeholder.svg?height=200&width=400",
-    status: "past",
+    status: "past" as "past",
   },
 ]
 
@@ -587,3 +587,4 @@ export default function EventsManagement() {
     </div>
   )
 }
+ 
