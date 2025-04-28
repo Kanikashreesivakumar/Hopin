@@ -15,6 +15,7 @@ interface AuthContextType {
   token: string | null;
   login: (user: User, token: string) => void;
   logout: () => void;
+  signup: (user: User, token: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,8 +50,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     router.push('/login');
   };
 
+  const signup = (user: User, token: string) => {
+    setUser(user);
+    setToken(token);
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

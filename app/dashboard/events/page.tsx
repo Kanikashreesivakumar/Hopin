@@ -43,7 +43,7 @@ const initialEvents = [
     description: "Annual music festival featuring student bands and performers.",
     attendees: 120,
     image: "/placeholder.svg?height=200&width=400",
-    status: "upcoming" as "upcoming",
+    status: "upcoming",
   },
   {
     id: "2",
@@ -83,7 +83,7 @@ const initialEvents = [
     description: "Network with successful alumni and learn from their experiences.",
     attendees: 50,
     image: "/placeholder.svg?height=200&width=400",
-    status: "past" as "past",
+    status: "past",
   },
 ]
 
@@ -99,7 +99,7 @@ interface Event {
 }
 
 export default function EventsManagement() {
-  const [events, setEvents] = useState<Event[]>(initialEvents)
+  const [events, setEvents] = useState<Event[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events)
   const [activeTab, setActiveTab] = useState("all")
@@ -210,6 +210,24 @@ export default function EventsManagement() {
       })
     }
   }
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const res = await fetch("/api/admin/events")
+        const data = await res.json();
+        if (data.events) {
+          setEvents(data.events.map((event: any) => ({
+            ...event,
+            id: event._id,
+          })));
+        }
+      } catch (err) {
+        // Optionally handle error
+      }
+    }
+    fetchEvents();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-12">

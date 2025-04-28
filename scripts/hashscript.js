@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-const passwords = ['Admin@123'];
+const passwords = ['654321', '123456'];
 
 passwords.forEach(async (pw, i) => {
   const hash = await bcrypt.hash(pw, 10);

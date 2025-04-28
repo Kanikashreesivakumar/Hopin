@@ -24,46 +24,43 @@ interface CostCalculatorProps {
 }
 
 export default function CostSplitCalculator({ className = "", initialValues, onCalculate }: CostCalculatorProps) {
-  const [fuelCost, setFuelCost] = useState(initialValues?.fuelCost || 500)
+  // Inputs
+  const [costPerKmInput, setCostPerKmInput] = useState(initialValues?.fuelCost || 20)
   const [distance, setDistance] = useState(initialValues?.distance || 25)
   const [passengers, setPassengers] = useState(initialValues?.passengers || 3)
+
+  // Results
   const [costPerPerson, setCostPerPerson] = useState(0)
   const [costPerKm, setCostPerKm] = useState(0)
   const [totalSavings, setTotalSavings] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
 
-  useEffect(() => {
-    calculateCosts()
-  }, [fuelCost, distance, passengers])
-
+  // Only calculate on button click
   const calculateCosts = () => {
     setIsCalculating(true)
-
-    // Simulate calculation delay for UI feedback
     setTimeout(() => {
-      // Calculate cost per person
-      const perPerson = fuelCost / passengers
+      const totalCost = costPerKmInput * distance
+      const perPerson = passengers > 0 ? totalCost / passengers : 0
       setCostPerPerson(perPerson)
-
-      // Calculate cost per km
-      const perKm = fuelCost / distance
-      setCostPerKm(perKm)
-
-      // Calculate total savings (what would have been paid if everyone drove separately)
-      const savings = fuelCost * (passengers - 1)
+      setCostPerKm(costPerKmInput)
+      const savings = totalCost * (passengers - 1)
       setTotalSavings(savings)
-
       if (onCalculate) {
         onCalculate({
           costPerPerson: perPerson,
-          costPerKm: perKm,
+          costPerKm: costPerKmInput,
           totalSavings: savings,
         })
       }
-
       setIsCalculating(false)
     }, 300)
   }
+
+  // Set initial calculation on mount only
+  useEffect(() => {
+    calculateCosts()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card className={`shadow-md ${className}`}>
@@ -78,18 +75,17 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
           <div className="space-y-2">
             <Label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300">
               <DollarSign className="h-4 w-4 mr-1 text-hopin-orange" />
-              Fuel Cost (₹)
+              Cost per km (₹)
             </Label>
             <Input
               type="number"
               className="focus-visible:ring-hopin-orange"
-              placeholder="500"
-              value={fuelCost}
-              onChange={(e) => setFuelCost(Number(e.target.value) || 0)}
+              placeholder="20"
+              value={costPerKmInput}
+              onChange={e => setCostPerKmInput(Number(e.target.value) || 0)}
               min={0}
             />
           </div>
-
           <div className="space-y-2">
             <Label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300">
               <Car className="h-4 w-4 mr-1 text-hopin-orange" />
@@ -100,12 +96,11 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
               className="focus-visible:ring-hopin-orange"
               placeholder="25"
               value={distance}
-              onChange={(e) => setDistance(Number(e.target.value) || 0)}
+              onChange={e => setDistance(Number(e.target.value) || 0)}
               min={0}
             />
           </div>
         </div>
-
         <div className="space-y-2">
           <div className="flex justify-between">
             <Label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -119,7 +114,7 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
             min={1}
             max={6}
             step={1}
-            onValueChange={(value) => setPassengers(value[0])}
+            onValueChange={value => setPassengers(value[0])}
             className="py-2"
           />
           <div className="flex justify-between text-xs text-gray-500">
@@ -131,7 +126,6 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
             <span>6</span>
           </div>
         </div>
-
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -152,7 +146,6 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
             </div>
           </div>
         </motion.div>
-
         <div className="grid grid-cols-2 gap-4 text-center text-sm">
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
             <div className="text-gray-600 dark:text-gray-400">Cost per km</div>
@@ -164,7 +157,6 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
               )}
             </div>
           </div>
-
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
             <div className="text-gray-600 dark:text-gray-400">Total Savings</div>
             <div className="font-semibold text-green-600">
@@ -176,7 +168,6 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
             </div>
           </div>
         </div>
-
         <Button onClick={calculateCosts} className="w-full bg-hopin-orange hover:bg-hopin-orange-dark text-white">
           Recalculate
         </Button>

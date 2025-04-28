@@ -6,6 +6,13 @@ export interface IUser extends Document {
   password: string;
   role?: string;
   createdAt: Date;
+  vehicleInfo?: {
+    make: string;
+    model: string;
+    year: string;
+    licensePlate: string;
+    color?: string;
+  };
 }
 
 const UserSchema = new Schema<IUser>({
@@ -14,6 +21,13 @@ const UserSchema = new Schema<IUser>({
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
   createdAt: { type: Date, default: Date.now },
+  vehicleInfo: {
+    make: { type: String },
+    model: { type: String },
+    year: { type: String },
+    licensePlate: { type: String },
+    color: { type: String },
+  },
 });
 
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

@@ -15,11 +15,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Car, Check, Eye, EyeOff, Github, Loader2, Lock, Mail, Shield, User, UserPlus } from "lucide-react"
 import Logo from "@/components/logo"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/hooks/AuthContext"
 
 type UserRole = "driver" | "passenger" | null
 
 export default function SignupPage() {
   const router = useRouter()
+  const { signup } = useAuth()
   const [selectedRole, setSelectedRole] = useState<UserRole>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
@@ -63,6 +65,7 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
 
     // Validate inputs
     if (!selectedRole || !name || !email || !password || !confirmPassword) {
@@ -85,13 +88,14 @@ export default function SignupPage() {
       return
     }
 
+    let signupBody: any = { name, email, password, role: selectedRole }
     if (selectedRole === "driver") {
-      // Validate vehicle information for drivers
-      const { make, model, year, licensePlate } = vehicleInfo
+      const { make, model, year, licensePlate, color } = vehicleInfo
       if (!make || !model || !year || !licensePlate) {
         setError("Please fill in all vehicle information")
         return
       }
+      signupBody.vehicleInfo = { make, model, year, licensePlate, color }
     }
 
     if (!agreeToTerms) {
@@ -100,17 +104,28 @@ export default function SignupPage() {
     }
 
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signupBody),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setError(data.error || "Signup failed")
+        setIsLoading(false)
+        return
+      }
       setSuccess("Account created successfully! Redirecting...")
-
-      // Redirect to appropriate dashboard based on role
+      signup(data.user, data.token)
       setTimeout(() => {
         router.push(`/dashboard/${selectedRole}`)
       }, 1500)
-    }, 2000)
+    } catch (err) {
+      setError("Signup failed. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const roleCards = [
@@ -396,7 +411,67 @@ export default function SignupPage() {
                         )}
                       </div>
 
-                     
+                      {selectedRole === "driver" && (
+                        <div className="space-y-2 rounded-lg border p-4 bg-muted/50">
+                          <h4 className="font-semibold text-base mb-2 text-hopin-orange">Vehicle Information</h4>
+                          <div className="grid grid-cols-1 gap-3">
+                            <div>
+                              <Label htmlFor="vehicle-make">Make</Label>
+                              <Input
+                                id="vehicle-make"
+                                placeholder="e.g. Toyota"
+                                value={vehicleInfo.make}
+                                onChange={e => setVehicleInfo({ ...vehicleInfo, make: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="vehicle-model">Model</Label>
+                              <Input
+                                id="vehicle-model"
+                                placeholder="e.g. Corolla"
+                                value={vehicleInfo.model}
+                                onChange={e => setVehicleInfo({ ...vehicleInfo, model: e.target.value })}
+                                required
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label htmlFor="vehicle-year">Year</Label>
+                                <Input
+                                  id="vehicle-year"
+                                  placeholder="e.g. 2020"
+                                  type="number"
+                                  min="1900"
+                                  max={new Date().getFullYear()}
+                                  value={vehicleInfo.year}
+                                  onChange={e => setVehicleInfo({ ...vehicleInfo, year: e.target.value })}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="vehicle-color">Color</Label>
+                                <Input
+                                  id="vehicle-color"
+                                  placeholder="e.g. Red"
+                                  value={vehicleInfo.color}
+                                  onChange={e => setVehicleInfo({ ...vehicleInfo, color: e.target.value })}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <Label htmlFor="vehicle-license">License Plate</Label>
+                              <Input
+                                id="vehicle-license"
+                                placeholder="e.g. ABC-1234"
+                                value={vehicleInfo.licensePlate}
+                                onChange={e => setVehicleInfo({ ...vehicleInfo, licensePlate: e.target.value })}
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -441,17 +516,16 @@ export default function SignupPage() {
 
                   {selectedRole && (
                     <>
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
+                      <div className="relative flex flex-col items-center justify-center w-full">
+                        <div className="relative w-full flex items-center justify-center">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                          </div>
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                       
-                        <Button variant="outline" type="button">
+                        <Button variant="outline" type="button" className="mt-4 w-full flex items-center justify-center">
                           <Mail className="mr-2 h-4 w-4" />
                           Google
                         </Button>
