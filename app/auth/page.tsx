@@ -197,7 +197,7 @@ export default function AuthPage() {
     }
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -806,7 +806,7 @@ export default function AuthPage() {
                       <div className="text-center text-sm">
                         Already have an account?{" "}
                         <Link
-                          href="/login"
+                          href="/auth"
                           className="text-hopin-orange hover:underline"
                         >
                           Sign in

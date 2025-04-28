@@ -151,7 +151,7 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-            <Link href="/login">Login</Link>
+            <Link href="/auth">Login</Link>
           </Button>
 
           <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
@@ -198,7 +198,7 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white text-lg px-8 py-3">
-                  <Link href="/login">Get Started</Link>
+                  <Link href="/auth">Get Started</Link>
                 </Button>
               </motion.div>
             </div>
@@ -417,7 +417,7 @@ export default function Home() {
 
           <div className="text-center mt-10">
             <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-              <Link href="/login">View All Events</Link>
+              <Link href="/auth">View All Events</Link>
             </Button>
           </div>
         </div>
@@ -658,7 +658,7 @@ export default function Home() {
               <ul className="space-y-2">
                 <li>
                   <a
-                    href="/login"
+                    href="/auth"
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
                    Admin
@@ -666,7 +666,7 @@ export default function Home() {
                 </li>
                 <li>
                   <a
-                    href="/login"
+                    href="/auth"
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
                    Passenger
@@ -674,7 +674,7 @@ export default function Home() {
                 </li>
                 <li>
                   <a
-                    href="/login"
+                    href="/auth"
                     className="text-gray-600 dark:text-gray-400 hover:text-hopin-orange dark:hover:text-hopin-orange transition-colors"
                   >
                     Driver
