@@ -15,6 +15,7 @@ import {
   Clock,
   Download,
   Loader2,  // Add this
+  LogOut,
   MapPin,
   Plus,
   RefreshCw,
@@ -27,6 +28,8 @@ import { generateEventDescription } from "@/utils/gemini"
 import AnalyticsChart from "@/components/analytics-chart"
 import { exportAnalytics } from "@/utils/exportAnalytics";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/hooks/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
   const [userName] = useState("Admin User")
@@ -139,10 +142,12 @@ export default function AdminDashboard() {
     }
   };
 
+  const { logout } = useAuth();
+  const router = useRouter ? useRouter() : null;
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <DynamicNavbar role="admin" userName={userName} userAvatar={userAvatar} />
-
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -484,6 +489,20 @@ export default function AdminDashboard() {
             </div>
           </Card>
         </motion.div>
+
+        <div className="mt-8 flex justify-end">
+          <Button
+            variant="outline"
+            className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+            onClick={() => {
+              logout && logout();
+              if (router) router.push("/auth");
+            }}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Log Out
+          </Button>
+        </div>
       </main>
     </div>
   )

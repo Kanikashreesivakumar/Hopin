@@ -35,22 +35,30 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/hooks/AuthContext"
+import { useRouter } from "next/navigation"
 
 type UserRole = "driver" | "passenger" | "admin"
 
-export default function DynamicNavbar() {
+interface DynamicNavbarProps {
+  role?: string;
+  userName?: string;
+  userAvatar?: string;
+}
+
+export default function DynamicNavbar({ role: propRole, userName: propUserName, userAvatar: propUserAvatar }: DynamicNavbarProps) {
   const { user, logout } = useAuth()
   const pathname = usePathname()
   const isMobile = useMobile()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [notificationCount, setNotificationCount] = useState(3)
+  const router = useRouter();
 
-  const isAuthenticated = !!user
-  console.log(isAuthenticated, user)
-  const role = user?.role as UserRole | undefined
-  const userName = user?.name || "Guest"
-  const userAvatar = user?.avatar || "/placeholder.svg?height=32&width=32"
+  // Use props if provided, otherwise fallback to context
+  const isAuthenticated = !!user || !!propRole
+  const role = propRole || (user?.role as UserRole | undefined)
+  const userName = propUserName || user?.name || "Guest"
+  const userAvatar = propUserAvatar || user?.avatar || "/placeholder.svg?height=32&width=32"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -252,7 +260,7 @@ export default function DynamicNavbar() {
                           <span>Settings</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={logout}>
+                        <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={() => { logout(); router.push("/auth"); }}>
                           <LogOut className="mr-2 h-4 w-4" />
                           <span>Log out</span>
                         </DropdownMenuItem>
@@ -260,9 +268,7 @@ export default function DynamicNavbar() {
                     </DropdownMenu>
                   </>
                 ) : (
-                  <Button variant="outline" className="text-hopin-orange hover:bg-hopin-orange/10">
-                    Login
-                  </Button>
+                  <Button variant="outline" className="text-hopin-orange hover:bg-hopin-orange/10" onClick={() => router.push("/auth")}>Login</Button>
                 )}
               </div>
             ) : (
@@ -327,15 +333,13 @@ export default function DynamicNavbar() {
                         <Button
                           variant="outline"
                           className="w-full border-red-300 text-red-500 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
-                          onClick={logout}
+                          onClick={() => { logout(); router.push("/auth"); }}
                         >
                           <LogOut className="mr-2 h-4 w-4" />
                           Log out
                         </Button>
                       ) : (
-                        <Button variant="outline" className="w-full text-hopin-orange hover:bg-hopin-orange/10">
-                          Login
-                        </Button>
+                        <Button variant="outline" className="w-full text-hopin-orange hover:bg-hopin-orange/10" onClick={() => router.push("/auth")}>Login</Button>
                       )}
                     </div>
                   </div>

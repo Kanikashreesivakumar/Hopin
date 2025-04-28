@@ -7,12 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Bell, Calendar, Car, ChevronRight, Clock, MapPin, Plus, Star } from "lucide-react"
+import { Bell, Calendar, Car, ChevronRight, Clock, MapPin, Plus, Star, LogOut } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
+import { useAuth } from "@/hooks/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function DriverDashboard() {
   const [userName] = useState("Alex Johnson")
   const [userAvatar] = useState("/placeholder.svg?height=64&width=64")
+  const { logout } = useAuth();
+  const router = useRouter ? useRouter() : null;
 
   // Sample upcoming rides data
   const upcomingRides = [
@@ -67,7 +71,6 @@ export default function DriverDashboard() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <DynamicNavbar role="driver" userName={userName} userAvatar={userAvatar} />
-
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -325,6 +328,20 @@ export default function DriverDashboard() {
             </div>
           </Card>
         </motion.div>
+
+        <div className="mt-8 flex justify-end">
+          <Button
+            variant="outline"
+            className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+            onClick={() => {
+              logout && logout();
+              if (router) router.push("/auth");
+            }}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Log Out
+          </Button>
+        </div>
       </main>
     </div>
   )
