@@ -13,6 +13,7 @@
     "@google/generative-ai": "^0.24.0",
     "@googlemaps/js-api-loader": "latest",
     "@hookform/resolvers": "^3.9.1",
+    "@prisma/client": "^6.6.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -79,6 +80,7 @@
     "@types/react-dom": "^19",
     "@types/three": "^0.175.0",
     "postcss": "^8",
+    "prisma": "^6.6.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
   }

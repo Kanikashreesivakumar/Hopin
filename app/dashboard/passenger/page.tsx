@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
@@ -11,6 +11,19 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Calendar, Car, ChevronRight, Clock, MapPin, Search, Star, Ticket, User } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
+import { toast } from "@/components/ui/use-toast"
+
+interface Ride {
+  id: number;
+  eventName: string;
+  date: string;
+  time: string;
+  driverName: string;
+  driverRating: number;
+  pickupLocation: string;
+  cost: number;
+  status: string;
+}
 
 export default function PassengerDashboard() {
   const [userName] = useState("Emma Wilson")
@@ -48,7 +61,7 @@ export default function PassengerDashboard() {
   ]
 
   // Sample booked rides data
-  const bookedRides = [
+  const bookedRides: Ride[] = [
     {
       id: 1,
       eventName: "Summer Music Festival",
@@ -61,6 +74,42 @@ export default function PassengerDashboard() {
       status: "confirmed",
     },
   ]
+
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCancelRide = async (rideId: number) => {
+    try {
+      setIsLoading(true);
+      // Add your API call here
+      const response = await fetch(`/api/rides/${rideId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error('Failed to cancel ride');
+
+      // Refresh the rides list
+      // Add your refresh logic here
+
+      toast({
+        title: "Ride Cancelled",
+        description: "Your ride has been cancelled successfully.",
+        variant: "default",
+      });
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to cancel ride. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -153,10 +202,27 @@ export default function PassengerDashboard() {
                         </div>
                       </div>
 
-                      <div className="mt-4 flex justify-end">
-                        <Button asChild className="hopin-button">
-                          <Link href={`/dashboard/passenger/rides/${ride.id}`}>View Details</Link>
+                      <div className="mt-4 flex justify-end space-x-2">
+                        <Button 
+                          variant="outline" 
+                          className="text-hopin-orange border-hopin-orange hover:bg-hopin-orange/10"
+                          onClick={() => {
+                            // Add any pre-navigation logic here
+                            router.push(`/dashboard/passenger/rides/${ride.id}`);
+                          }}
+                          disabled={ride.status === 'cancelled'}
+                        >
+                          View Details
                         </Button>
+                        {ride.status === 'confirmed' && (
+                          <Button 
+                            variant="destructive"
+                            className="bg-red-500 hover:bg-red-600"
+                            onClick={() => handleCancelRide(ride.id)}
+                          >
+                            Cancel Ride
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))}
