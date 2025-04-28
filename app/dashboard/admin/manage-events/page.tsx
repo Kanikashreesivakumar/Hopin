@@ -32,6 +32,7 @@ import { CalendarIcon } from "lucide-react"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import RoleNavbar from "@/components/role-navbar"
+import { useRouter } from "next/navigation"
 
 // Mock data for events
 const initialEvents = [
@@ -99,6 +100,7 @@ interface Event {
 }
 
 export default function ManageEventsPage() {
+  const router = useRouter();
   const [events, setEvents] = useState<Event[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
@@ -129,11 +131,13 @@ export default function ManageEventsPage() {
       }
       const result = await response.json()
       if (result.success) {
+        // status is now set by backend, so just use it
         const mappedEvents = result.data.map((eventData: any) => ({
           ...eventData,
           _id: eventData._id,
           title: eventData.title,
           date: eventData.date,
+          status: eventData.status,
         }))
         setEvents(mappedEvents)
         setFilteredEvents(mappedEvents)
@@ -171,61 +175,7 @@ export default function ManageEventsPage() {
     setFilteredEvents(filtered)
   }, [events, searchTerm, activeTab])
 
-  const handleAddEvent = async () => {
-    if (!newEvent.title || !newEvent.date || !newEvent.location) {
-      setAlertMessage("Please fill in required event details (Title, Date, Location).")
-      setShowSuccessAlert(true)
-      setTimeout(() => setShowSuccessAlert(false), 3000)
-      return
-    }
-
-    setIsSubmitting(true)
-    setError(null)
-
-    try {
-      const response = await fetch("/api/admin/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newEvent.title,
-          date: newEvent.date,
-          location: newEvent.location,
-          description: newEvent.description,
-          status: newEvent.status,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || "Failed to add event")
-      }
-
-      fetchEvents()
-
-      setIsAddEventOpen(false)
-      setNewEvent({
-        title: "",
-        date: "",
-        location: "",
-        description: "",
-        status: "upcoming",
-      })
-      setSelectedDate(undefined)
-
-      setAlertMessage("Event added successfully!")
-      setShowSuccessAlert(true)
-      setTimeout(() => setShowSuccessAlert(false), 3000)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add event")
-      setAlertMessage(err instanceof Error ? err.message : "Failed to add event")
-      setShowSuccessAlert(true)
-      setTimeout(() => setShowSuccessAlert(false), 4000)
-      console.error("Add event error:", err)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  
 
   const handleUpdateEvent = async () => {
     if (!editingEvent || !editingEvent.title || !editingEvent.date || !editingEvent.location) {
@@ -239,6 +189,7 @@ export default function ManageEventsPage() {
     setError(null)
 
     try {
+      console.log("Editing event:", editingEvent)
       const response = await fetch(`/api/admin/events?eventId=${editingEvent._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -247,20 +198,19 @@ export default function ManageEventsPage() {
           date: editingEvent.date,
           location: editingEvent.location,
           description: editingEvent.description,
-          status: editingEvent.status,
+          attendees: editingEvent.attendees,
+          image: editingEvent.image,
         }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok || !result.success) {
         throw new Error(result.error || "Failed to update event")
       }
 
       fetchEvents()
-
       setEditingEvent(null)
-
       setAlertMessage("Event updated successfully!")
       setShowSuccessAlert(true)
       setTimeout(() => setShowSuccessAlert(false), 3000)
@@ -422,252 +372,12 @@ export default function ManageEventsPage() {
                     <TabsTrigger value="all">All Events</TabsTrigger>
                     <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
                     <TabsTrigger value="past">Past</TabsTrigger>
-                    <TabsTrigger value="draft">Drafts</TabsTrigger>
                   </TabsList>
                 </Tabs>
-
-                <Dialog open={isAddEventOpen} onOpenChange={setIsAddEventOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Event
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[525px]">
-                    <DialogHeader>
-                      <DialogTitle>Add New Event</DialogTitle>
-                      <DialogDescription>Create a new event for students to find rides to.</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="event-name">Event Name</Label>
-                        <Input
-                          id="event-name"
-                          placeholder="Spring Music Festival"
-                          value={newEvent.title || ""}
-                          onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label>Date & Time</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="outline" className="w-full justify-start text-left font-normal">
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {newEvent.date ? format(new Date(newEvent.date), "PPP p") : <span>Pick a date</span>}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                            <CalendarComponent
-                              mode="single"
-                              selected={selectedDate}
-                              onSelect={handleDateSelect}
-                              initialFocus
-                            />
-                            <div className="p-3 border-t border-border">
-                              <Input
-                                type="time"
-                                defaultValue={newEvent.date ? format(new Date(newEvent.date), "HH:mm") : ""}
-                                onChange={(e) => handleTimeSelect(e.target.value, "new")}
-                              />
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="event-location">Location</Label>
-                        <Input
-                          id="event-location"
-                          placeholder="Student Union Building"
-                          value={newEvent.location || ""}
-                          onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="event-description">Description</Label>
-                        <Textarea
-                          id="event-description"
-                          placeholder="Provide details about your event..."
-                          rows={3}
-                          value={newEvent.description || ""}
-                          onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="event-status">Status</Label>
-                        <select
-                          id="event-status"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          value={newEvent.status || "upcoming"}
-                          onChange={(e) =>
-                            setNewEvent({ ...newEvent, status: e.target.value as "upcoming" | "past" | "draft" })
-                          }
-                        >
-                          <option value="upcoming">Upcoming</option>
-                          <option value="draft">Draft</option>
-                        </select>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setIsAddEventOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleAddEvent}
-                        className="bg-hopin-orange hover:bg-hopin-orange-dark text-white"
-                        disabled={!newEvent.title || !newEvent.date || !newEvent.location || isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <svg
-                              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Adding...
-                          </>
-                        ) : (
-                          "Add Event"
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-
-                <Dialog open={!!editingEvent} onOpenChange={(open) => !open && setEditingEvent(null)}>
-                  <DialogContent className="sm:max-w-[525px]">
-                    <DialogHeader>
-                      <DialogTitle>Edit Event</DialogTitle>
-                      <DialogDescription>Update the details of your event.</DialogDescription>
-                    </DialogHeader>
-                    {editingEvent && (
-                      <div className="grid gap-4 py-4">
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-event-name">Event Name</Label>
-                          <Input
-                            id="edit-event-name"
-                            value={editingEvent.title || ""}
-                            onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label>Date & Time</Label>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {editingEvent.date ? format(new Date(editingEvent.date), "PPP p") : <span>Pick a date</span>}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <CalendarComponent
-                                mode="single"
-                                selected={editingEvent.date ? new Date(editingEvent.date) : undefined}
-                                onSelect={handleEditDateSelect}
-                                initialFocus
-                              />
-                              <div className="p-3 border-t border-border">
-                                <Input
-                                  type="time"
-                                  defaultValue={editingEvent.date ? format(new Date(editingEvent.date), "HH:mm") : ""}
-                                  onChange={(e) => handleTimeSelect(e.target.value, "edit")}
-                                />
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-event-location">Location</Label>
-                          <Input
-                            id="edit-event-location"
-                            value={editingEvent.location || ""}
-                            onChange={(e) => setEditingEvent({ ...editingEvent, location: e.target.value })}
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-event-description">Description</Label>
-                          <Textarea
-                            id="edit-event-description"
-                            rows={3}
-                            value={editingEvent.description || ""}
-                            onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="edit-event-status">Status</Label>
-                          <select
-                            id="edit-event-status"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            value={editingEvent.status || "upcoming"}
-                            onChange={(e) =>
-                              setEditingEvent({
-                                ...editingEvent,
-                                status: e.target.value as "upcoming" | "past" | "draft",
-                              })
-                            }
-                          >
-                            <option value="upcoming">Upcoming</option>
-                            <option value="past">Past</option>
-                            <option value="draft">Draft</option>
-                          </select>
-                        </div>
-                      </div>
-                    )}
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setEditingEvent(null)}>
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleUpdateEvent}
-                        className="bg-hopin-orange hover:bg-hopin-orange-dark text-white"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <svg
-                              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Updating...
-                          </>
-                        ) : (
-                          "Update Event"
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <Button className="bg-hopin-orange hover:bg-hopin-orange-dark text-white" onClick={() => router.push("/dashboard/admin/add-events")}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Event
+                </Button>
               </div>
             </div>
 
@@ -784,6 +494,95 @@ export default function ManageEventsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={!!editingEvent} onOpenChange={(open) => !open && setEditingEvent(null)}>
+                      <DialogContent className="sm:max-w-[525px]">
+                        <DialogHeader>
+                          <DialogTitle>Edit Event</DialogTitle>
+                          <DialogDescription>Update the details of your event.</DialogDescription>
+                        </DialogHeader>
+                        {editingEvent && (
+                          <div className="grid gap-4 py-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="edit-event-name">Event Name</Label>
+                              <Input
+                                id="edit-event-name"
+                                value={editingEvent.title}
+                                onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label>Date & Time</Label>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {editingEvent.date ? (
+                                      format(new Date(editingEvent.date), "PPP p")
+                                    ) : (
+                                      <span>Pick a date</span>
+                                    )}
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                  <CalendarComponent
+                                    mode="single"
+                                    selected={editingEvent.date ? new Date(editingEvent.date) : undefined}
+                                    onSelect={handleEditDateSelect}
+                                    initialFocus
+                                  />
+                                  <div className="p-3 border-t border-border">
+                                    <Input
+                                      type="time"
+                                      defaultValue={editingEvent.date ? format(new Date(editingEvent.date), "HH:mm") : ""}
+                                      onChange={(e) => {
+                                        const date = new Date(editingEvent.date)
+                                        const [hours, minutes] = e.target.value.split(":").map(Number)
+                                        date.setHours(hours, minutes)
+                                        setEditingEvent({
+                                          ...editingEvent,
+                                          date: date.toISOString(),
+                                        })
+                                      }}
+                                    />
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="edit-event-location">Location</Label>
+                              <Input
+                                id="edit-event-location"
+                                value={editingEvent.location}
+                                onChange={(e) => setEditingEvent({ ...editingEvent, location: e.target.value })}
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="edit-event-description">Description</Label>
+                              <Textarea
+                                id="edit-event-description"
+                                rows={3}
+                                value={editingEvent.description}
+                                onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
+                              />
+                            </div>
+                            
+                          </div>
+                        )}
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setEditingEvent(null)}>
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={handleUpdateEvent}
+                            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                          >
+                            Update Event
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  
       </main>
     </div>
   )

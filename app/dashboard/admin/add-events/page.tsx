@@ -31,6 +31,7 @@ export default function AddEventPage() {
   const [selectedLocation, setSelectedLocation] = useState<LatLngLiteral | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [attendees, setAttendees] = useState(1)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -49,22 +50,43 @@ export default function AddEventPage() {
     setLocation(`Location at ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setShowSuccess(false);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setShowSuccess(true)
-
-      // Reset form after success
-      setTimeout(() => {
-        setShowSuccess(false)
-        // In a real app, you would redirect to the events list
-        router.push("/dashboard/admin/manage-events")
-      }, 2000)
-    }, 1500)
+    // Prepare event data
+    const eventData = {
+      name: eventName,
+      date: date ? date.toISOString() : undefined,
+      time,
+      location,
+      description,
+      image: imagePreview || undefined,
+      attendees,
+    };
+    console.log(eventData)
+    try {
+      const res = await fetch("/api/admin/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventData),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          router.push("/dashboard/admin/manage-events");
+        }, 2000);
+      } else {
+        alert(data.error || "Failed to create event");
+      }
+    } catch (err) {
+      alert("An error occurred while creating the event.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -243,6 +265,18 @@ export default function AddEventPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="attendees">Attendees</Label>
+                    <Input
+                      id="attendees"
+                      type="number"
+                      min={1}
+                      value={attendees}
+                      onChange={e => setAttendees(Number(e.target.value))}
+                      required
+                    />
                   </div>
 
                   <Button

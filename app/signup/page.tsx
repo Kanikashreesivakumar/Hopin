@@ -15,11 +15,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Car, Check, Eye, EyeOff, Github, Loader2, Lock, Mail, Shield, User, UserPlus } from "lucide-react"
 import Logo from "@/components/logo"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/hooks/AuthContext"
 
 type UserRole = "driver" | "passenger" | null
 
 export default function SignupPage() {
   const router = useRouter()
+  const { signup } = useAuth()
   const [selectedRole, setSelectedRole] = useState<UserRole>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
@@ -63,6 +65,7 @@ export default function SignupPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
 
     // Validate inputs
     if (!selectedRole || !name || !email || !password || !confirmPassword) {
@@ -85,13 +88,14 @@ export default function SignupPage() {
       return
     }
 
+    let signupBody: any = { name, email, password, role: selectedRole }
     if (selectedRole === "driver") {
-      // Validate vehicle information for drivers
-      const { make, model, year, licensePlate } = vehicleInfo
+      const { make, model, year, licensePlate, color } = vehicleInfo
       if (!make || !model || !year || !licensePlate) {
         setError("Please fill in all vehicle information")
         return
       }
+      signupBody.vehicleInfo = { make, model, year, licensePlate, color }
     }
 
     if (!agreeToTerms) {
@@ -100,17 +104,28 @@ export default function SignupPage() {
     }
 
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signupBody),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        setError(data.error || "Signup failed")
+        setIsLoading(false)
+        return
+      }
       setSuccess("Account created successfully! Redirecting...")
-
-      // Redirect to appropriate dashboard based on role
+      signup(data.user, data.token)
       setTimeout(() => {
         router.push(`/dashboard/${selectedRole}`)
       }, 1500)
-    }, 2000)
+    } catch (err) {
+      setError("Signup failed. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const roleCards = [
