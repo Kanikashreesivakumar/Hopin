@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Calendar, Car, ChevronRight, Clock, MapPin, Search, Star, Ticket, User } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
 import { toast } from "@/components/ui/use-toast"
+import { useAuth } from "@/hooks/AuthContext"
 
 interface Ride {
   id: number;
@@ -26,8 +27,9 @@ interface Ride {
 }
 
 export default function PassengerDashboard() {
-  const [userName] = useState("Emma Wilson")
-  const [userAvatar] = useState("/placeholder.svg?height=64&width=64")
+  const { user } = useAuth();
+  const userName = user?.name || user?.email || "Passenger";
+  const userAvatar = "/placeholder.svg?height=64&width=64"
 
   // Sample upcoming events data
   const upcomingEvents = [

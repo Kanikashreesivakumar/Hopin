@@ -13,8 +13,9 @@ import { useAuth } from "@/hooks/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function DriverDashboard() {
-  const [userName] = useState("Alex Johnson")
-  const [userAvatar] = useState("/placeholder.svg?height=64&width=64")
+  const { user } = useAuth();
+  const userName = user?.name || user?.email || "Driver";
+  const userAvatar = "/placeholder.svg?height=64&width=64";
   const { logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 

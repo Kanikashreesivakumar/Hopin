@@ -1,17 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import Ride from '@/models/Ride'; // Assuming you have a Ride model
+import { NextResponse } from 'next/server';
+import { supabase } from '@/utils/supabaseClient';
 
-// GET /api/admin/rides - Fetches all rides
-export async function GET(req: NextRequest) {
-  await dbConnect();
-
+export async function GET() {
   try {
-    // Adjust the find query if needed, e.g., populate driver/passenger details
-    const rides = await Ride.find({}); 
-    return NextResponse.json({ success: true, data: rides }, { status: 200 });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
+    // Fetch all rides, including driver, event, and passengers
+    const { data: rides, error } = await supabase.from('rides').select('*');
+    if (error) throw error;
+    // Optionally, fetch related user/event data in separate queries if needed
+    return NextResponse.json({ success: true, data: rides });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: 'Failed to fetch rides' }, { status: 500 });
   }
 }
