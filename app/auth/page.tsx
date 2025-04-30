@@ -208,10 +208,10 @@ export default function AuthPage() {
         setIsLoading(false);
         return;
       }
-      setSuccess("Login successful! Redirecting...");
-      login(data.user, data.token); // Save user and token in context
+      setSuccess(" successful! Redirecting...");
+      login(data.user, data.token); 
       setTimeout(() => {
-        router.push(`/dashboard/${data.user.role}`); // Redirect to dashboard/role
+        router.push(`/dashboard/${data.user.role}`); 
       }, 1500);
     } catch (err) {
       setError("Login failed. Please try again.");
@@ -227,7 +227,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 bg-gradient-to-br from-green-600 via-violet-600 to-pink-500"
+          
         />
 
         <div className="relative z-20 flex items-center text-lg font-medium">
@@ -241,21 +241,21 @@ export default function AuthPage() {
           className="relative z-20 mt-auto"
         >
           <blockquote className="space-y-2">
-            <p className="text-lg">
+            <p className="text-lg text-white font-bold">
               "HOPIN has completely transformed how our students get to campus
               events. It's made ride-sharing simple, affordable, and fun!"
             </p>
-            <footer className="text-sm">
-              Sofia Davis, Student Council President
+            <footer className="text-sm  text-white font-bold">
+             Student Council President
             </footer>
           </blockquote>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.1 }}
-          transition={{ duration: 1 }}
-          className="absolute top-0 left-0 z-10 h-full w-full bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover opacity-10"
+          initial={{ opacity: 0.5}}
+          animate={{ opacity: 0.8 }}
+          transition={{ duration: 2 }}
+          className="absolute top-0 left-0 z-10 h-full w-full bg-[url('/hopin.jpg?height=1080&width=1920')] bg-cover opacity-100"
         />
       </div>
 
@@ -263,7 +263,7 @@ export default function AuthPage() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] lg:w-[400px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
-              Welcome to HOPIN
+              Welcome to <h1 className="text-hopin-orange">HOPIN</h1>
             </h1>
             <p className="text-sm text-muted-foreground">
               Sign in to your account or create a new one
@@ -289,7 +289,7 @@ export default function AuthPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Alert className="bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200">
+              <Alert className="bg-orange-100 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-200">
                 <Check className="h-4 w-4 mr-2" />
                 <AlertDescription>{success}</AlertDescription>
               </Alert>
@@ -337,7 +337,7 @@ export default function AuthPage() {
                           <Label htmlFor="password">Password</Label>
                           <Link
                             href="/auth/forgot-password"
-                            className="text-xs text-primary hover:underline"
+                            className="text-xs hover:underline text-hopin-orange"
                           >
                             Forgot password?
                           </Link>
@@ -368,7 +368,7 @@ export default function AuthPage() {
                           </Button>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 ">
                         <Checkbox
                           id="remember"
                           checked={rememberMe}
@@ -378,16 +378,16 @@ export default function AuthPage() {
                         />
                         <label
                           htmlFor="remember"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="text-sm font-medium text-hopin-orange leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Remember me
                         </label>
                       </div>
                     </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
+                    <CardFooter className="flex flex-col space-y-4  ">
                       <Button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-orange to-emerald-600 hover:from-orange hover:to-emerald-700"
+                        className="w-full bg-hopin-orange hover:bg-orange-600 transition-colors duration-200"
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -412,8 +412,12 @@ export default function AuthPage() {
                           </span>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" type="button">
+                      <div className="flex justify-center w-full">
+                        <Button 
+                          variant="outline" 
+                          type="button"
+                          className="w-[200px]" 
+                        >
                           <Mail className="mr-2 h-4 w-4" />
                           Google
                         </Button>
@@ -748,7 +752,7 @@ export default function AuthPage() {
                               I agree to the{" "}
                               <Link
                                 href="/terms"
-                                className="text-primary hover:underline"
+                                className="hover:underline text-hopin-orange"
                               >
                                 terms and conditions
                               </Link>
@@ -761,7 +765,7 @@ export default function AuthPage() {
                       {selectedRole && (
                         <Button
                           type="submit"
-                          className="w-full bg-gradient-to-r from-orange to-emerald-600 hover:from-orange hover:to-emerald-700"
+                          className="w-full bg-hopin-orange hover:bg-orange-600 transition-colors duration-200"
                           disabled={isLoading}
                         >
                           {isLoading ? (
@@ -791,14 +795,16 @@ export default function AuthPage() {
                                 </span>
                               </div>
                             </div>
-                            <Button
-                              variant="outline"
-                              type="button"
-                              className="mt-4 w-full flex items-center justify-center"
-                            >
-                              <Mail className="mr-2 h-4 w-4" />
-                              Google
-                            </Button>
+                            <div className="flex justify-center w-full">
+                              <Button 
+                                variant="outline" 
+                                type="button"
+                                className="w-[200px]"
+                              >
+                                <Mail className="mr-2 h-4 w-4" />
+                                Google
+                              </Button>
+                            </div>
                           </div>
                         </>
                       )}

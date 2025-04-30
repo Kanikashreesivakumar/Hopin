@@ -18,7 +18,7 @@ export default function DriverDashboard() {
   const { logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 
-  // Sample upcoming rides data
+  
   const upcomingRides = [
     {
       id: 1,
@@ -42,7 +42,6 @@ export default function DriverDashboard() {
     },
   ]
 
-  // Sample ride requests data
   const rideRequests = [
     {
       id: 1,
@@ -60,7 +59,7 @@ export default function DriverDashboard() {
     },
   ]
 
-  // Sample earnings data
+  
   const earningsData = {
     today: 0,
     thisWeek: 800,
