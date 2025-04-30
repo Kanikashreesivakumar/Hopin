@@ -1,28 +1,38 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/utils/supabaseClient';
+import { NextRequest, NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Update ride status to 'cancelled' in Supabase
-    const { data: ride, error } = await supabase
-      .from('rides')
-      .update({ status: 'cancelled' })
-      .eq('id', params.id)
-      .select()
-      .single();
-    if (!ride || error) {
+    const { db } = await connectToDatabase();
+    const rideId = params.id;
+
+    // Update ride status to 'cancelled' in MongoDB
+    const result = await db.collection('rides').updateOne(
+      { _id: new ObjectId(rideId) },
+      { 
+        $set: { 
+          status: 'cancelled',
+          updatedAt: new Date()
+        } 
+      }
+    );
+
+    if (result.modifiedCount === 0) {
       return NextResponse.json(
-        { message: 'Ride not found or failed to cancel', details: error?.message },
+        { success: false, error: 'Ride not found' },
         { status: 404 }
       );
     }
-    return NextResponse.json({ message: 'Ride cancelled successfully', ride });
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Ride cancelled successfully' 
+    });
   } catch (error) {
+    console.error('Error cancelling ride:', error);
     return NextResponse.json(
-      { message: 'Failed to cancel ride' },
+      { success: false, error: 'Failed to cancel ride' },
       { status: 500 }
     );
   }

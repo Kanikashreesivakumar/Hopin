@@ -41,8 +41,7 @@ HOPIN is a real-time ride-sharing platform designed specifically for college stu
 | Backend          | Node.js (Express)             |
 | Database         | MongoDB (with Mongoose)       |
 | Maps Integration | Mapbox API                    |
-| AI Assistant     | Gemini Chatbot (Google AI)    |
-| Authentication   | Supabase Auth / JWT           |
+| AI Assistant     | Gemini Chatbot (Google AI)    | 
 | Hosting          | Vercel + MongoDB Atlas        |
 
 ---
