@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     },
   ]
 
-  // Sample recent rides data
+  
   const recentRides = [
     {
       id: 1,
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh Data
             </Button>
-            <Button asChild className="hopin-button">
+            <Button asChild className="hopin-button bg-hopin-orange hover:bg-hopin-orange/90">
               <Link href="/dashboard/admin/add-events">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Event
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
                       <Button variant="outline" className="border-hopin-gray/30">
                         Edit
                       </Button>
-                      <Button asChild className="hopin-button">
+                      <Button asChild className="hopin-button bg-hopin-orange hover:bg-hopin-orange/90">
                         <Link href={`/dashboard/admin/events/${event.id}`}>View Details</Link>
                       </Button>
                     </div>
@@ -285,9 +285,9 @@ export default function AdminDashboard() {
               </div>
 
               <div className="mt-6 text-center">
-                <Button asChild className="hopin-button">
+                <Button asChild className="hopin-button bg-hopin-orange hover:bg-hopin-orange/90">
                   <Link href="/dashboard/admin/add-events">
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Plus className="mr-2 h-4 w-4"/>
                     Add New Event
                   </Link>
                 </Button>
