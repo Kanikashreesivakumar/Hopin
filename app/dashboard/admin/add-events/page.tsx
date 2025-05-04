@@ -79,7 +79,7 @@ export default function AddEventPage() {
 
     // Prepare event data
     const eventData = {
-      name: eventName,
+      title: eventName,
       date: date ? date.toISOString() : undefined,
       time,
       location,

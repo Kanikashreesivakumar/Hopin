@@ -398,6 +398,9 @@ export default function ManageEventsPage() {
                           src={event.image || "/placeholder.svg"}
                           alt={event.title}
                           className="w-full h-40 object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/placeholder.svg";
+                          }}
                         />
                         <div className="absolute top-2 right-2">
                           <DropdownMenu>
