@@ -19,7 +19,7 @@ export default function DriverDashboard() {
   const { logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 
-  // Sample upcoming rides data
+  
   const upcomingRides = [
     {
       id: 1,
@@ -43,14 +43,14 @@ export default function DriverDashboard() {
     },
   ]
 
-  // Sample ride requests data
-  const rideRequests = [
+  const [rideRequests, setRideRequests] = useState([
     {
       id: 1,
       userName: "Sarah Miller",
       userRating: 4.8,
       eventName: "Summer Music Festival",
       pickupLocation: "Downtown Plaza",
+      status: "pending", // Add status field
     },
     {
       id: 2,
@@ -58,10 +58,31 @@ export default function DriverDashboard() {
       userRating: 4.9,
       eventName: "Summer Music Festival",
       pickupLocation: "West End Avenue",
+      status: "pending",
     },
-  ]
+  ]);
 
-  // Sample earnings data
+  const handleAccept = (requestId: number) => {
+    setRideRequests(requests =>
+      requests.map(request =>
+        request.id === requestId
+          ? { ...request, status: "accepted" }
+          : request
+      )
+    );
+  };
+
+  const handleDecline = (requestId: number) => {
+    setRideRequests(requests =>
+      requests.map(request =>
+        request.id === requestId
+          ? { ...request, status: "declined" }
+          : request
+      )
+    );
+  };
+
+  
   const earningsData = {
     today: 0,
     thisWeek: 800,
@@ -76,10 +97,10 @@ export default function DriverDashboard() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Driver Dashboard</h1>
-            <p className="text-gray-600 dark:text-gray-400">Welcome back, {userName}!</p>
+            <p className="text-black dark:text-black">Welcome back, {userName}!</p>
           </div>
 
-          <Button asChild className="hopin-button mt-4 md:mt-0">
+          <Button asChild className="hopin-button mt-4 md:mt-0 bg-hopin-orange hover:bg-hopin-orange/90">
             <Link href="/dashboard/driver/offer-ride">
               <Plus className="mr-2 h-4 w-4" />
               Offer a Ride
@@ -255,7 +276,17 @@ export default function DriverDashboard() {
                           </div>
                         </div>
                       </div>
-                      <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">New</Badge>
+                      <Badge 
+                        className={
+                          request.status === "pending"
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : request.status === "accepted"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                        }
+                      >
+                        {request.status === "pending" ? "New" : request.status === "accepted" ? "Accepted" : "Declined"}
+                      </Badge>
                     </div>
 
                     <div className="mt-4 pl-12">
@@ -267,15 +298,23 @@ export default function DriverDashboard() {
                       </div>
                     </div>
 
-                    <div className="mt-4 flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        className="border-red-300 text-red-500 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
-                      >
-                        Decline
-                      </Button>
-                      <Button className="hopin-button">Accept</Button>
-                    </div>
+                    {request.status === "pending" && (
+                      <div className="mt-4 flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          className="border-red-300 text-red-500 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                          onClick={() => handleDecline(request.id)}
+                        >
+                          Decline
+                        </Button>
+                        <Button 
+                          className="hopin-button bg-hopin-orange hover:bg-hopin-orange-90"
+                          onClick={() => handleAccept(request.id)}
+                        >
+                          Accept
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

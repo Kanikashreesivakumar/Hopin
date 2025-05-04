@@ -18,7 +18,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
 import RoleNavbar from "@/components/role-navbar"
 import GoogleMaps from "@/components/google-maps"
-import { supabase } from "@/utils/supabaseClient"
 type LatLngLiteral = { lat: number; lng: number }
 
 export default function AddEventPage() {
@@ -33,12 +32,10 @@ export default function AddEventPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [attendees, setAttendees] = useState(1)
-  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setImageFile(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result as string)
@@ -58,25 +55,6 @@ export default function AddEventPage() {
     setIsSubmitting(true);
     setShowSuccess(false);
 
-    let imageUrl: string | undefined = undefined;
-    if (imageFile) {
-      // Upload to Supabase Storage
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${eventName.replace(/\s+/g, "-").toLowerCase()}-${Date.now()}.${fileExt}`;
-      const { data, error } = await supabase.storage.from("event-banners").upload(fileName, imageFile, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-      if (error) {
-        alert("Image upload failed: " + error.message);
-        setIsSubmitting(false);
-        return;
-      }
-      // Get public URL
-      const { data: publicUrlData } = supabase.storage.from("event-banners").getPublicUrl(fileName);
-      imageUrl = publicUrlData?.publicUrl;
-    }
-
     // Prepare event data
     const eventData = {
       title: eventName,
@@ -84,7 +62,7 @@ export default function AddEventPage() {
       time,
       location,
       description,
-      image: imageUrl || undefined,
+      image: imagePreview || undefined,
       attendees,
     };
     console.log(eventData)

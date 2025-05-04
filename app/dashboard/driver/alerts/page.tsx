@@ -167,18 +167,18 @@ export default function PickupAlertsPage() {
                           <div className="flex items-center">
                             <Avatar className="h-10 w-10 mr-3">
                               <AvatarImage
-                                src={alert.passenger.avatar || "/placeholder.svg"}
-                                alt={alert.passenger.name}
+                                src={alert.passenger?.avatar || "/placeholder.svg"}
+                                alt={alert.passenger?.name || "Unknown Passenger"}
                               />
                               <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
-                                {alert.passenger.name.charAt(0)}
+                                {alert.passenger?.name.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-medium">{alert.passenger.name}</div>
+                              <div className="font-medium">{alert.passenger?.name}</div>
                               <div className="flex items-center text-sm text-gray-500">
                                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
-                                <span>{alert.passenger.rating}</span>
+                                <span>{alert.passenger?.rating}</span>
                               </div>
                             </div>
                           </div>
@@ -326,17 +326,17 @@ export default function PickupAlertsPage() {
                             {alert.type === "pickup_request" && (
                               <Avatar className="h-8 w-8 mr-2">
                                 <AvatarImage
-                                  src={alert.passenger.avatar || "/placeholder.svg"}
-                                  alt={alert.passenger.name}
+                                  src={alert.passenger?.avatar || "/placeholder.svg"}
+                                  alt={alert.passenger?.name}
                                 />
                                 <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
-                                  {alert.passenger.name.charAt(0)}
+                                  {alert.passenger?.name.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
                             )}
                             <div>
                               <div className="text-sm font-medium">
-                                {alert.type === "pickup_request" ? alert.passenger.name : alert.eventName}
+                                {alert.type === "pickup_request" ? alert.passenger?.name : alert.eventName}
                               </div>
                               <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {format(new Date(alert.timestamp), "MMM d, h:mm a")}

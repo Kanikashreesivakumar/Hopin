@@ -50,7 +50,7 @@ export default function Home() {
     containerRef.current.appendChild(renderer.domElement)
     rendererRef.current = renderer
 
-    // Lighting
+   
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
     scene.add(ambientLight)
 
@@ -58,23 +58,23 @@ export default function Home() {
     directionalLight.position.set(0, 1, 1)
     scene.add(directionalLight)
 
-    // Simple car model
+   
     const carGroup = new THREE.Group()
 
-    // Car body
+  
     const bodyGeometry = new THREE.BoxGeometry(2, 0.5, 1)
     const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 })
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial)
     carGroup.add(body)
 
-    // Car top
+    
     const topGeometry = new THREE.BoxGeometry(1.2, 0.4, 0.8)
     const topMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 })
     const top = new THREE.Mesh(topGeometry, topMaterial)
     top.position.y = 0.45
     carGroup.add(top)
 
-    // Wheels
+    
     const wheelGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32)
     const wheelMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 })
 
@@ -101,7 +101,7 @@ export default function Home() {
     scene.add(carGroup)
     carModelRef.current = carGroup
 
-    // Animation loop
+    
     const animate = () => {
       requestAnimationFrame(animate)
 
@@ -114,7 +114,7 @@ export default function Home() {
 
     animate()
 
-    // Cleanup
+   
     return () => {
       if (containerRef.current && rendererRef.current) {
         containerRef.current.removeChild(rendererRef.current.domElement)
@@ -122,7 +122,7 @@ export default function Home() {
     }
   }, [])
 
-  // Fetch events from API
+  
   const [events, setEvents] = useState<any[]>([]);
   useEffect(() => {
     async function fetchEvents() {
@@ -133,19 +133,19 @@ export default function Home() {
           setEvents(data.events.map((event: any) => ({
             ...event,
             id: event._id,
-            title: event.name, // for compatibility with old code
+            title: event.name, 
           })));
         }
       } catch (err) {
-        // Optionally handle error
+      
       }
     }
     fetchEvents();
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
+    <div className="min -h-screen bg-white dark:bg-gray-900">
+    
       <header className="py-4 px-6 flex justify-between items-center">
         <Logo />
         <div className="flex items-center gap-4">
@@ -154,16 +154,13 @@ export default function Home() {
             <Link href="/auth">Login</Link>
           </Button>
 
-          <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-      
+        
         </div>
       </header>
 
-      {/* Hero Section */}
+
       <section className="relative py-20 overflow-hidden">
-        {/* Wave background - Fixed the CSS classes with proper spacing */}
+       
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-hopin-orange/5 to-transparent"></div>
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"></div>
