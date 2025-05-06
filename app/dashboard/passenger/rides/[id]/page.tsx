@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Calendar, Car, ChevronLeft, Clock, MapPin, Phone, Star, Loader2 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
-import DynamicNavbar from "@/components/dynamic-navbar"
 
 // Define the Ride interface if not already defined elsewhere
 interface Ride {
@@ -129,7 +128,7 @@ export default function RideDetailsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900">
-        <DynamicNavbar role="passenger" />
+        
         <main className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-[60vh]">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-hopin-orange"></div>
@@ -142,7 +141,7 @@ export default function RideDetailsPage() {
   if (!ride) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900">
-        <DynamicNavbar role="passenger" />
+        
         <main className="container mx-auto px-4 py-8">
           <Card className="p-8 text-center">
             <h2 className="text-xl font-semibold mb-2">Ride Not Found</h2>
@@ -165,7 +164,7 @@ export default function RideDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role="passenger" />
+     
       
       <main className="container mx-auto px-4 py-8">
         <Button

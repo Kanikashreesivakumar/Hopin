@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,126 +11,72 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { CalendarIcon, Filter, Search } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import RoleNavbar from "@/components/role-navbar"
+
 import Mapbox from "@/components/mapbox"
 import RideCard from "@/components/ride-card"
 
-// Mock data for rides
-const mockRides = [
-  {
-    id: 1,
-    driverName: "Alex Johnson",
-    driverRating: 4.8,
-    eventName: "Spring Music Festival",
-    eventDate: "2025-04-15T18:00:00",
-    pickupPoint: "Student Union Building",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    cost: 5.5,
-    availableSeats: 3,
-    carModel: "Honda Civic",
-    departureTime: "2025-04-15T17:00:00",
-  },
-  {
-    id: 2,
-    driverName: "Samantha Lee",
-    driverRating: 4.9,
-    eventName: "Basketball Championship",
-    eventDate: "2025-04-20T19:30:00",
-    pickupPoint: "North Campus Parking",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    cost: 4.0,
-    availableSeats: 4,
-    carModel: "Toyota Corolla",
-    departureTime: "2025-04-20T18:30:00",
-  },
-  {
-    id: 3,
-    driverName: "Michael Chen",
-    driverRating: 4.7,
-    eventName: "Career Fair",
-    eventDate: "2025-04-22T10:00:00",
-    pickupPoint: "Engineering Building",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    cost: 3.5,
-    availableSeats: 2,
-    carModel: "Tesla Model 3",
-    departureTime: "2025-04-22T09:00:00",
-  },
-  {
-    id: 4,
-    driverName: "Jessica Williams",
-    driverRating: 4.6,
-    eventName: "Spring Music Festival",
-    eventDate: "2025-04-15T18:00:00",
-    pickupPoint: "Downtown Station",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    cost: 6.0,
-    availableSeats: 3,
-    carModel: "Hyundai Sonata",
-    departureTime: "2025-04-15T17:15:00",
-  },
-  {
-    id: 5,
-    driverName: "David Kim",
-    driverRating: 5.0,
-    eventName: "Hackathon 2025",
-    eventDate: "2025-04-25T08:00:00",
-    pickupPoint: "Computer Science Building",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    cost: 4.5,
-    availableSeats: 3,
-    carModel: "Kia Soul",
-    departureTime: "2025-04-25T07:15:00",
-  },
-]
-
 export default function FindRidePage() {
+  const [rides, setRides] = useState<any[]>([])
   const [date, setDate] = useState<Date | undefined>(undefined)
-  const [filteredRides, setFilteredRides] = useState(mockRides)
+  const [filteredRides, setFilteredRides] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [event, setEvent] = useState<string>("all")
   const [showMap, setShowMap] = useState(false)
-  const [selectedRide, setSelectedRide] = useState<(typeof mockRides)[0] | null>(null)
+  const [selectedRide, setSelectedRide] = useState<any | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
+
+  useEffect(() => {
+    // Fetch rides from API
+    const fetchRides = async () => {
+      setIsFetching(true)
+      try {
+        const res = await fetch("/api/admin/rides")
+        const json = await res.json()
+        if (json.success) {
+          setRides(json.data)
+          setFilteredRides(json.data)
+        } else {
+          setRides([])
+          setFilteredRides([])
+        }
+      } catch (e) {
+        setRides([])
+        setFilteredRides([])
+      } finally {
+        setIsFetching(false)
+      }
+    }
+    fetchRides()
+  }, [])
 
   const handleSearch = () => {
     setIsLoading(true)
-
-    // Simulate API call
     setTimeout(() => {
-      let results = mockRides
-
+      let results = rides
       if (searchTerm) {
         results = results.filter(
           (ride) =>
-            ride.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ride.pickupPoint.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ride.driverName.toLowerCase().includes(searchTerm.toLowerCase()),
+            (ride.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              ride.pickupPoint?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              ride.driverName?.toLowerCase().includes(searchTerm.toLowerCase()))
         )
       }
-
       if (event !== "all") {
         results = results.filter((ride) => ride.eventName === event)
       }
-
       if (date) {
         results = results.filter((ride) => {
           const rideDate = new Date(ride.eventDate)
           return rideDate.toDateString() === date.toDateString()
         })
       }
-
       setFilteredRides(results)
       setIsLoading(false)
     }, 800)
   }
 
-  const uniqueEvents = Array.from(new Set(mockRides.map((ride) => ride.eventName)))
+  const uniqueEvents = Array.from(new Set(rides.map((ride) => ride.eventName)))
 
   const container = {
     hidden: { opacity: 0 },
@@ -147,14 +93,14 @@ export default function FindRidePage() {
     show: { opacity: 1, y: 0 },
   }
 
-  const handleRideSelect = (ride: (typeof mockRides)[0]) => {
+  const handleRideSelect = (ride: any) => {
     setSelectedRide(ride)
     setShowMap(true)
   }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="passenger" userName="Emma Wilson" />
+      
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -302,25 +248,32 @@ export default function FindRidePage() {
           </motion.div>
         )}
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {filteredRides.length > 0 ? (
-            filteredRides.map((ride) => (
-              <motion.div key={ride.id} variants={item}>
-                <RideCard ride={ride} onViewRoute={() => handleRideSelect(ride)} />
-              </motion.div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <h3 className="text-xl font-medium mb-2">No rides found</h3>
-              <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters or search terms</p>
-            </div>
-          )}
-        </motion.div>
+        {isFetching ? (
+          <div className="text-center py-12">
+            <h3 className="text-xl font-medium mb-2">Loading rides...</h3>
+            <p className="text-gray-500 dark:text-gray-400">Please wait while we fetch the rides</p>
+          </div>
+        ) : (
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {filteredRides.length > 0 ? (
+              filteredRides.map((ride) => (
+                <motion.div key={ride.id} variants={item}>
+                  <RideCard ride={ride} onViewRoute={() => handleRideSelect(ride)} />
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <h3 className="text-xl font-medium mb-2">No rides found</h3>
+                <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters or search terms</p>
+              </div>
+            )}
+          </motion.div>
+        )}
       </main>
     </div>
   )

@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Car, Clock, MapPin, Phone, Share2 } from "lucide-react"
 import { format } from "date-fns"
-import RoleNavbar from "@/components/role-navbar"
 import Mapbox from "@/components/mapbox"
 
 export default function ShareLocationPage() {
@@ -108,7 +107,6 @@ export default function ShareLocationPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="driver" userName="Alex Johnson" />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

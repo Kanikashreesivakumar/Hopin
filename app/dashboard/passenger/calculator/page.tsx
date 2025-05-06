@@ -2,14 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import RoleNavbar from "@/components/role-navbar"
 import CostSplitCalculator from "@/components/cost-split-calculator"
 import { Info } from "lucide-react"
 
 export default function CostCalculatorPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="passenger" userName="Emma Wilson" />
+  
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

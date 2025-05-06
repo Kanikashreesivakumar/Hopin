@@ -16,13 +16,16 @@ import { CalendarIcon, Clock, ImageIcon, MapPin, Plus, Upload } from "lucide-rea
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
-import RoleNavbar from "@/components/role-navbar"
 import GoogleMaps from "@/components/google-maps"
 import { supabase } from "@/utils/supabaseClient"
+import { useAuth } from "@/hooks/AuthContext"
+
 type LatLngLiteral = { lat: number; lng: number }
 
 export default function AddEventPage() {
   const router = useRouter()
+  const { user } = useAuth();
+
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [time, setTime] = useState("")
   const [eventName, setEventName] = useState("")
@@ -113,7 +116,7 @@ export default function AddEventPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="admin" userName="Admin User" />
+      
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

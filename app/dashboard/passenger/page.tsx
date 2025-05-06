@@ -10,7 +10,6 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Calendar, Car, ChevronRight, Clock, MapPin, Search, Star, Ticket, User } from "lucide-react"
-import DynamicNavbar from "@/components/dynamic-navbar"
 import { toast } from "@/components/ui/use-toast"
 import { useAuth } from "@/hooks/AuthContext"
 
@@ -115,7 +114,6 @@ export default function PassengerDashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role="passenger" userName={userName} userAvatar={userAvatar} />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

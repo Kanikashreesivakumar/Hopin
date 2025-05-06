@@ -14,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Calendar, Car, Check, Clock, CreditCard, MapPin, Star, Users } from "lucide-react"
 import { format } from "date-fns"
-import RoleNavbar from "@/components/role-navbar"
 import Mapbox from "@/components/mapbox"
 
 // Mock data for rides
@@ -99,7 +98,7 @@ export default function BookRidePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900">
-        <RoleNavbar role="passenger" userName="Emma Wilson" />
+     
         <main className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-hopin-orange mb-4"></div>
@@ -113,7 +112,7 @@ export default function BookRidePage() {
   if (!ride) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900">
-        <RoleNavbar role="passenger" userName="Emma Wilson" />
+       
         <main className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[60vh]">
           <Card className="max-w-md w-full">
             <CardContent className="pt-6 text-center">
@@ -139,7 +138,7 @@ export default function BookRidePage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="passenger" userName="Emma Wilson" />
+     
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -17,90 +17,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { format } from "date-fns"
-import RoleNavbar from "@/components/role-navbar"
 import Mapbox from "@/components/mapbox"
-
-// Mock data for rides
-const mockRides = [
-  {
-    id: "1",
-    eventName: "Spring Music Festival",
-    eventDate: "2025-04-15T18:00:00",
-    departureTime: "2025-04-15T17:00:00",
-    pickupLocation: "Student Union Building",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    passengers: [
-      { id: 1, name: "Sarah Miller", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43210" },
-      { id: 2, name: "John Davis", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43211" },
-      { id: 3, name: "Emily Chen", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43212" },
-    ],
-    maxPassengers: 4,
-    earnings: 350,
-    status: "upcoming",
-  },
-  {
-    id: "2",
-    eventName: "Tech Conference 2023",
-    eventDate: "2025-04-20T19:30:00",
-    departureTime: "2025-04-20T18:30:00",
-    pickupLocation: "North Campus Parking",
-    pickupCoordinates: { lat: 28.6159, lng: 77.2195 },
-    destinationCoordinates: { lat: 28.6189, lng: 77.219 },
-    passengers: [
-      { id: 4, name: "Michael Brown", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43213" },
-      { id: 5, name: "Jessica Lee", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43214" },
-      { id: 6, name: "David Kim", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43215" },
-    ],
-    maxPassengers: 3,
-    earnings: 450,
-    status: "upcoming",
-  },
-  {
-    id: "3",
-    eventName: "Alumni Networking",
-    eventDate: "2025-03-28T17:00:00",
-    departureTime: "2025-03-28T16:00:00",
-    pickupLocation: "Business School Atrium",
-    pickupCoordinates: { lat: 28.6109, lng: 77.2395 },
-    destinationCoordinates: { lat: 28.6119, lng: 77.239 },
-    passengers: [
-      { id: 7, name: "Robert Wilson", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43216" },
-      { id: 8, name: "Amanda Taylor", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43217" },
-    ],
-    maxPassengers: 4,
-    earnings: 250,
-    status: "completed",
-  },
-  {
-    id: "4",
-    eventName: "Spring Concert",
-    eventDate: "2025-03-15T19:00:00",
-    departureTime: "2025-03-15T18:00:00",
-    pickupLocation: "Music Hall",
-    pickupCoordinates: { lat: 28.6179, lng: 77.2095 },
-    destinationCoordinates: { lat: 28.6199, lng: 77.209 },
-    passengers: [
-      { id: 9, name: "Thomas Johnson", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43218" },
-      { id: 10, name: "Sophia Martinez", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43219" },
-      { id: 11, name: "Daniel Garcia", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43220" },
-    ],
-    maxPassengers: 3,
-    earnings: 300,
-    status: "completed",
-  },
-]
+import { useAuth } from "@/hooks/AuthContext"
 
 export default function MyRidesPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [selectedRide, setSelectedRide] = useState<string | null>(null)
+  const [rides, setRides] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user?.id) return;
+    setIsLoading(true);
+    fetch(`/api/rides/${user.id}`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) setRides(json.data || []);
+        else setRides([]);
+      })
+      .catch(() => setRides([]))
+      .finally(() => setIsLoading(false));
+  }, [user?.id]);
 
   // Filter rides based on active tab
-  const filteredRides = activeTab === "all" ? mockRides : mockRides.filter((ride) => ride.status === activeTab)
+  const filteredRides = activeTab === "all" ? rides : rides.filter((ride) => ride.status === activeTab)
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="driver" userName="Alex Johnson" />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -285,7 +229,7 @@ export default function MyRidesPage() {
               className="lg:col-span-2"
             >
               {(() => {
-                const ride = mockRides.find((r) => r.id === selectedRide)
+                const ride = rides.find((r) => r.id === selectedRide)
                 if (!ride) return null
 
                 return (

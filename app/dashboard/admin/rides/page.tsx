@@ -17,7 +17,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { format } from "date-fns"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import RoleNavbar from "@/components/role-navbar"
+import { useAuth } from "@/hooks/AuthContext"
 
 interface Ride {
   _id: string
@@ -50,6 +50,8 @@ export default function ViewAllRidesPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const { user } = useAuth()
 
   const fetchRides = async () => {
     setIsLoading(true)
@@ -133,7 +135,6 @@ export default function ViewAllRidesPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
-        <RoleNavbar role="admin" userName="Admin User" />
         <main className="container mx-auto px-4 py-8 text-center">
           <p>Loading rides...</p>
         </main>
@@ -144,7 +145,6 @@ export default function ViewAllRidesPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
-        <RoleNavbar role="admin" userName="Admin User" />
         <main className="container mx-auto px-4 py-8 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error loading rides</h1>
           <p className="text-gray-600 dark:text-gray-400">{error}</p>
@@ -158,7 +158,6 @@ export default function ViewAllRidesPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="admin" userName="Admin User" />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -391,7 +390,7 @@ export default function ViewAllRidesPage() {
                     acc[name].count++
                     acc[name].passengers += ride.passengerIds.length
                     return acc
-                  }, {} as Record<string, { count: number; passengers: number }>)
+                  }, {} as Record<string, { count: number; passengers: number }>),
                 )
                   .sort(([, a], [, b]) => b.count - a.count)
                   .slice(0, 3)

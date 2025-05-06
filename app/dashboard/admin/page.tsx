@@ -23,7 +23,6 @@ import {
   Ticket,
   Users,
 } from "lucide-react"
-import DynamicNavbar from "@/components/dynamic-navbar"
 import { generateEventDescription } from "@/utils/gemini"
 import AnalyticsChart from "@/components/analytics-chart"
 import { exportAnalytics } from "@/utils/exportAnalytics";
@@ -35,9 +34,6 @@ export default function AdminDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 
-  // Use user context for name and avatar, fallback to placeholder
-  const userName = user?.name || "Admin User";
-  const userAvatar = user?.avatar || "/placeholder.svg?height=64&width=64";
 
   const [isLoading, setIsLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -148,7 +144,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role={user?.role || "admin"} userName={userName} userAvatar={userAvatar} />
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>

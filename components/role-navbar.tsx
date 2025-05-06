@@ -40,19 +40,19 @@ import { Badge } from "@/components/ui/badge"
 
 export type UserRole = "admin" | "passenger" | "driver"
 
-interface RoleNavbarProps {
+interface DynamicNavbarProps {
   role: UserRole
   userName?: string
   userAvatar?: string
   notificationCount?: number
 }
 
-export default function RoleNavbar({
+export default function DynamicNavbar({
   role,
   userName = "John Doe",
   userAvatar = "/placeholder.svg?height=32&width=32",
   notificationCount = 3,
-}: RoleNavbarProps) {
+}: DynamicNavbarProps) {
   const pathname = usePathname()
   const isMobile = useMobile()
   const [isScrolled, setIsScrolled] = useState(false)
@@ -84,8 +84,6 @@ export default function RoleNavbar({
             icon: <Calendar className="h-4 w-4 mr-2" />,
           },
           { href: "/dashboard/admin/rides", label: "View All Rides", icon: <Car className="h-4 w-4 mr-2" /> },
-          { href: "/dashboard/admin/refresh", label: "Refresh Data", icon: <RefreshCw className="h-4 w-4 mr-2" /> },
-          { href: "/dashboard/admin/logout", label: "Logout", icon: <LogOut className="h-4 w-4 mr-2" /> },
         ]
       case "passenger":
         return [

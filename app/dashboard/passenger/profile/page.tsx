@@ -27,7 +27,7 @@ import {
   Star,
   User,
 } from "lucide-react"
-import DynamicNavbar from "@/components/dynamic-navbar"
+
 
 // Mock user data
 const userData = {
@@ -114,8 +114,7 @@ export default function PassengerProfilePage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role="passenger" userName={profile.name} userAvatar={profile.avatar} />
-
+     
       <main className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>

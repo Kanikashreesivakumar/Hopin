@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,6 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Bell, Calendar, Car, ChevronRight, Clock, MapPin, Plus, Star, LogOut } from "lucide-react"
-import DynamicNavbar from "@/components/dynamic-navbar"
 import { useAuth } from "@/hooks/AuthContext";
 import { useRouter } from "next/navigation";
 
@@ -19,29 +18,23 @@ export default function DriverDashboard() {
   const { logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 
-  // Sample upcoming rides data
-  const upcomingRides = [
-    {
-      id: 1,
-      eventName: "Summer Music Festival",
-      date: "June 15, 2023",
-      time: "4:30 PM",
-      pickupLocation: "Central Station",
-      passengers: 2,
-      maxPassengers: 4,
-      earnings: 350,
-    },
-    {
-      id: 2,
-      eventName: "Tech Conference 2023",
-      date: "July 10, 2023",
-      time: "8:30 AM",
-      pickupLocation: "University Campus",
-      passengers: 3,
-      maxPassengers: 3,
-      earnings: 450,
-    },
-  ]
+  const [driverRides, setDriverRides] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    setIsLoading(true);
+    fetch(`/api/rides/${user.id}`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.success) setDriverRides(json.data || []);
+        else setDriverRides([]);
+      })
+      .catch(() => setDriverRides([]))
+      .finally(() => setIsLoading(false));
+  }, [user?.id]);
+
+  const upcomingRides = driverRides;
 
   // Sample ride requests data
   const rideRequests = [
@@ -71,7 +64,6 @@ export default function DriverDashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role="driver" userName={userName} userAvatar={userAvatar} />
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>

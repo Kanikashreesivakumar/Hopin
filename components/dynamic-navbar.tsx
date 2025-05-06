@@ -90,20 +90,17 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
           { href: "/dashboard/driver/rides", label: "My Rides", icon: <Car className="h-4 w-4 mr-2" /> },
           { href: "/dashboard/driver/alerts", label: "Pickup Alerts", icon: <Bell className="h-4 w-4 mr-2" /> },
           { href: "/dashboard/driver/location", label: "Share Location", icon: <MapPin className="h-4 w-4 mr-2" /> },
-          { href: "/dashboard/driver/profile", label: "Profile", icon: <User className="h-4 w-4 mr-2" /> },
         ]
       case "passenger":
         return [
           { href: "/dashboard/passenger", label: "Home", icon: <Home className="h-4 w-4 mr-2" /> },
           { href: "/dashboard/passenger/events", label: "View Events", icon: <Calendar className="h-4 w-4 mr-2" /> },
-          { href: "/dashboard/passenger/find", label: "Find Rides", icon: <Search className="h-4 w-4 mr-2" /> },
-          { href: "/dashboard/passenger/book", label: "Book Ride", icon: <Car className="h-4 w-4 mr-2" /> },
+          { href: "/dashboard/passenger/find", label: "Find Rides", icon: <Search className="h-4 w-4 mr-2" /> },        
           {
             href: "/dashboard/passenger/calculator",
             label: "Cost Split Calculator",
             icon: <Users className="h-4 w-4 mr-2" />,
           },
-          { href: "/dashboard/passenger/profile", label: "Profile", icon: <User className="h-4 w-4 mr-2" /> },
         ]
       case "admin":
         return [

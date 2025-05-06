@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -9,81 +9,48 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, Filter, MapPin, Search, Users } from "lucide-react"
 import { format } from "date-fns"
-import RoleNavbar from "@/components/role-navbar"
-
-// Mock data for events
-const mockEvents = [
-  {
-    id: 1,
-    title: "Spring Music Festival",
-    date: "2025-04-15T18:00:00",
-    location: "Student Union Building",
-    description: "Annual music festival featuring student bands and performers.",
-    attendees: 120,
-    ridesAvailable: 12,
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 2,
-    title: "Basketball Championship",
-    date: "2025-04-20T19:30:00",
-    location: "University Sports Center",
-    description: "Final match of the inter-college basketball tournament.",
-    attendees: 85,
-    ridesAvailable: 8,
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 3,
-    title: "Career Fair",
-    date: "2025-04-22T10:00:00",
-    location: "Engineering Building",
-    description: "Connect with potential employers and explore career opportunities.",
-    attendees: 200,
-    ridesAvailable: 15,
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 4,
-    title: "Hackathon 2025",
-    date: "2025-04-25T08:00:00",
-    location: "Computer Science Building",
-    description: "24-hour coding competition with prizes for the best projects.",
-    attendees: 75,
-    ridesAvailable: 5,
-    image: "/placeholder.svg?height=200&width=400",
-  },
-  {
-    id: 5,
-    title: "Alumni Networking",
-    date: "2025-04-28T17:00:00",
-    location: "Business School Atrium",
-    description: "Network with successful alumni and learn from their experiences.",
-    attendees: 50,
-    ridesAvailable: 6,
-    image: "/placeholder.svg?height=200&width=400",
-  },
-]
 
 export default function ViewEventsPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredEvents, setFilteredEvents] = useState(mockEvents)
+  const [events, setEvents] = useState<any[]>([])
+  const [filteredEvents, setFilteredEvents] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setIsLoading(true)
+      setError(null)
+      try {
+        const res = await fetch("/api/admin/events")
+        const data = await res.json()
+        if (res.ok && data.success) {
+          setEvents(data.data)
+          setFilteredEvents(data.data)
+        } else {
+          setError(data.error || "Failed to fetch events")
+        }
+      } catch (err) {
+        setError("Failed to fetch events")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchEvents()
+  }, [])
 
   const handleSearch = () => {
     setIsLoading(true)
-
-    // Simulate API call
     setTimeout(() => {
-      const results = mockEvents.filter(
+      const results = events.filter(
         (event) =>
           event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          event.description.toLowerCase().includes(searchTerm.toLowerCase()),
+          (event.description && event.description.toLowerCase().includes(searchTerm.toLowerCase())),
       )
       setFilteredEvents(results)
       setIsLoading(false)
-    }, 500)
+    }, 200)
   }
 
   const container = {
@@ -103,7 +70,7 @@ export default function ViewEventsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <RoleNavbar role="passenger" userName="Emma Wilson" />
+  
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -166,6 +133,10 @@ export default function ViewEventsPage() {
           </CardContent>
         </Card>
 
+        {error && (
+          <div className="text-center text-red-500 mb-6">{error}</div>
+        )}
+
         <motion.div
           variants={container}
           initial="hidden"
@@ -174,7 +145,7 @@ export default function ViewEventsPage() {
         >
           {filteredEvents.length > 0 ? (
             filteredEvents.map((event) => (
-              <motion.div key={event.id} variants={item}>
+              <motion.div key={event.id || event._id} variants={item}>
                 <Card className="overflow-hidden h-full border border-gray-200 dark:border-gray-700 hover:border-hopin-orange/50 transition-colors">
                   <div className="h-48 relative">
                     <img
@@ -183,7 +154,7 @@ export default function ViewEventsPage() {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-2 right-2">
-                      <Badge className="bg-hopin-orange text-white">{event.ridesAvailable} rides available</Badge>
+                      <Badge className="bg-hopin-orange text-white">{event.ridesAvailable !== undefined ? `${event.ridesAvailable} rides available` : (event.rides ? `${event.rides} rides` : "Rides info")}</Badge>
                     </div>
                   </div>
                   <CardContent className="p-4">
@@ -203,7 +174,7 @@ export default function ViewEventsPage() {
                       </div>
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         <Users className="h-4 w-4 mr-2" />
-                        <span>{event.attendees} attendees</span>
+                        <span>{event.attendees || 0} attendees</span>
                       </div>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{event.description}</p>
@@ -213,10 +184,10 @@ export default function ViewEventsPage() {
                         className="flex-1 border-hopin-orange text-hopin-orange hover:bg-hopin-orange/10"
                         asChild
                       >
-                        <Link href={`/dashboard/passenger/events/${event.id}`}>View Details</Link>
+                        <Link href={`/dashboard/passenger/events/${event.id || event._id}`}>View Details</Link>
                       </Button>
                       <Button className="flex-1 bg-hopin-orange hover:bg-hopin-orange-dark text-white" asChild>
-                        <Link href={`/dashboard/passenger/find?event=${event.id}`}>Find Rides</Link>
+                        <Link href={`/dashboard/passenger/find?event=${event.id || event._id}`}>Find Rides</Link>
                       </Button>
                     </div>
                   </CardContent>

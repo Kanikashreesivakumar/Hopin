@@ -17,7 +17,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
-import DynamicNavbar from "@/components/dynamic-navbar"
 
 // Mock data for events
 const mockEvents = [
@@ -55,7 +54,6 @@ export default function OfferRidePage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role="driver" userName={userName} userAvatar={userAvatar} />
 
       {showSuccess && (
         <motion.div
