@@ -7,7 +7,6 @@ export async function POST(request: Request) {
   try {
     const { email } = await request.json()
 
-    // Check if email exists
     const user = await prisma.user.findUnique({
       where: { email }
     })
@@ -19,10 +18,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Generate reset token
     const resetToken = await generateResetToken(user.id)
 
-    // Send reset email
     await sendResetEmail(email, resetToken)
 
     return NextResponse.json({
