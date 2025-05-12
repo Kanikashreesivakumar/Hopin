@@ -19,7 +19,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
 
-// Mock data for events
 const mockEvents = [
   { id: 1, name: "Summer Music Festival", date: "2025-06-15T18:00:00" },
   { id: 2, name: "Basketball Championship", date: "2025-06-20T19:30:00" },
@@ -30,8 +29,8 @@ const mockEvents = [
 
 export default function OfferRidePage() {
   const router = useRouter()
-  const [userName] = useState("Alex Johnson")
-  const [userAvatar] = useState("/placeholder.svg?height=64&width=64")
+  const [userName] = useState("Ajay advik")
+  const [userAvatar] = useState("/perlogo.jpg?height=64&width=64")
 
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [time, setTime] = useState("")

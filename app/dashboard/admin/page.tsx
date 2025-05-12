@@ -14,7 +14,7 @@ import {
   ChevronRight,
   Clock,
   Download,
-  Loader2,  // Add this
+  Loader2,  
   LogOut,
   MapPin,
   Plus,
@@ -35,9 +35,8 @@ export default function AdminDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 
-  // Use user context for name and avatar, fallback to placeholder
   const userName = user?.name || "Admin User";
-  const userAvatar = user?.avatar || "/placeholder.svg?height=64&width=64";
+  const userAvatar = (user as any)?.avatar || "/perlogo.jpg?height=64&width=64";
 
   const [isLoading, setIsLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);

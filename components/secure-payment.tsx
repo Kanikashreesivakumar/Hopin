@@ -183,14 +183,14 @@ export default function SecurePayment({
                   </div>
                   <div className="flex items-center space-x-1">
                     <Badge
-                      variant="outline"
+                      variant="default"
                       className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
                     >
                       <Lock className="h-3 w-3 mr-1" />
                       PCI DSS
                     </Badge>
                     <Badge
-                      variant="outline"
+                      variant="default"
                       className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800"
                     >
                       <Shield className="h-3 w-3 mr-1" />
@@ -201,7 +201,7 @@ export default function SecurePayment({
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Card visualization */}
+             
                 <div className="relative h-44 w-full perspective">
                   <motion.div
                     className={`absolute inset-0 rounded-xl p-6 shadow-md bg-gradient-to-br ${
@@ -281,7 +281,7 @@ export default function SecurePayment({
                     <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="card-name"
-                      placeholder="John Doe"
+                      placeholder="Jasim"
                       className="pl-9"
                       value={cardholderName}
                       onChange={(e) => setCardholderName(e.target.value)}
@@ -331,7 +331,7 @@ export default function SecurePayment({
                     transition={{ duration: 0.3 }}
                   >
                     <Alert
-                      variant="outline"
+                      variant="default"
                       className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                     >
                       <Check className="h-4 w-4 text-green-600 dark:text-green-400" />

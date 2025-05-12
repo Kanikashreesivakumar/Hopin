@@ -23,6 +23,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
+export interface User {
+  name: string;
+  email: string;
+  avatar?: string; 
+}
+
 export default function Navbar() {
   const pathname = usePathname()
   const isMobile = useMobile()
@@ -58,7 +64,7 @@ export default function Navbar() {
     { href: "/profile", label: "Profile" },
   ]
 
-  // Combine links based on authentication state
+  
   const links = isAuthenticated ? [...navLinks, ...authenticatedLinks] : navLinks
 
   return (
@@ -121,7 +127,7 @@ export default function Navbar() {
                           <DropdownMenuItem key={i} className="cursor-pointer p-4">
                             <div className="flex items-start gap-4">
                               <Avatar className="h-9 w-9">
-                                <AvatarImage src="/placeholder.svg?height=36&width=36" alt="User" />
+                                <AvatarImage src="/perlogo.jpg?height=36&width=36" alt="User" />
                                 <AvatarFallback>U</AvatarFallback>
                               </Avatar>
                               <div className="space-y-1">

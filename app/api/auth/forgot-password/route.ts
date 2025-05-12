@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const resetToken = await generateResetToken(user.id)
+    const resetToken = await generateResetToken(user.id.toString())
 
     await sendResetEmail(email, resetToken)
 

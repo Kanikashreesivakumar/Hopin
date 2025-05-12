@@ -31,20 +31,17 @@ export default function Home() {
   const carModelRef = useRef<THREE.Group | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  // Simple Three.js car model
   useEffect(() => {
     if (!containerRef.current) return
 
-    // Initialize Three.js scene
+
     const scene = new THREE.Scene()
     sceneRef.current = scene
 
-    // Camera
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
     camera.position.z = 5
     cameraRef.current = camera
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setSize(200, 200)
     containerRef.current.appendChild(renderer.domElement)
@@ -215,7 +212,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section ref={howItWorksRef} className="py-20 bg-gray-50 dark:bg-gray-800/50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -239,7 +235,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Driver Card */}
+            
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHowItWorksInView ? { opacity: 1, y: 0 } : {}}
@@ -274,7 +270,6 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Passenger Card */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHowItWorksInView ? { opacity: 1, y: 0 } : {}}
@@ -309,7 +304,7 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Admin Card */}
+ 
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHowItWorksInView ? { opacity: 1, y: 0 } : {}}
@@ -347,7 +342,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live Events Showcase */}
       <section ref={eventsRef} className="py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -385,7 +379,7 @@ export default function Home() {
               >
                 <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
                   <img
-                    src={event.image || "/placeholder.svg"}
+                    src={event.image || "/music.jpg"}
                     alt={event.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
@@ -553,7 +547,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Cost Split Calculator UI */}
+
       <section ref={calculatorRef} className="py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -586,7 +580,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI Chatbot Integration */}
       <div className="fixed bottom-6 right-6 z-50">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -607,7 +600,7 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Footer */}
+   
       <footer className="bg-gray-50 dark:bg-gray-800/50 py-12">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

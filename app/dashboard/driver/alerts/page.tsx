@@ -20,8 +20,8 @@ const mockAlerts = [
     type: "pickup_request",
     passenger: {
       id: 1,
-      name: "Sarah Miller",
-      avatar: "/placeholder.svg?height=40&width=40",
+      name: "Saran",
+      avatar: "/perlogo.jpg?height=40&width=40",
       rating: 4.8,
       phone: "+91 98765 43210",
     },
@@ -38,7 +38,7 @@ const mockAlerts = [
     passenger: {
       id: 2,
       name: "John Davis",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/perlogo.jpg?height=40&width=40",
       rating: 4.6,
       phone: "+91 98765 43211",
     },
@@ -65,8 +65,8 @@ const mockAlerts = [
     type: "pickup_request",
     passenger: {
       id: 3,
-      name: "Emily Chen",
-      avatar: "/placeholder.svg?height=40&width=40",
+      name: "kani",
+      avatar: "/perlogo.jpg?height=40&width=40",
       rating: 4.9,
       phone: "+91 98765 43212",
     },
@@ -82,8 +82,8 @@ const mockAlerts = [
     type: "pickup_request",
     passenger: {
       id: 4,
-      name: "Michael Brown",
-      avatar: "/placeholder.svg?height=40&width=40",
+      name: "Muhammed shibin",
+      avatar: "/perlogo.jpg?height=40&width=40",
       rating: 4.7,
       phone: "+91 98765 43213",
     },
@@ -167,7 +167,7 @@ export default function PickupAlertsPage() {
                           <div className="flex items-center">
                             <Avatar className="h-10 w-10 mr-3">
                               <AvatarImage
-                                src={alert.passenger?.avatar || "/placeholder.svg"}
+                                src={alert.passenger?.avatar || "/perlogo.jpg"}
                                 alt={alert.passenger?.name || "Unknown Passenger"}
                               />
                               <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
@@ -326,7 +326,7 @@ export default function PickupAlertsPage() {
                             {alert.type === "pickup_request" && (
                               <Avatar className="h-8 w-8 mr-2">
                                 <AvatarImage
-                                  src={alert.passenger?.avatar || "/placeholder.svg"}
+                                  src={alert.passenger?.avatar || "/perlogo.jpg"}
                                   alt={alert.passenger?.name}
                                 />
                                 <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">

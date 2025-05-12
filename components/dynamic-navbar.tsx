@@ -54,11 +54,11 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
   const [notificationCount, setNotificationCount] = useState(3)
   const router = useRouter();
 
-  // Use props if provided, otherwise fallback to context
+  
   const isAuthenticated = !!user || !!propRole
   const role = propRole || (user?.role as UserRole | undefined)
   const userName = propUserName || user?.name || "Guest"
-  const userAvatar = propUserAvatar || user?.avatar || "/placeholder.svg?height=32&width=32"
+  const userAvatar = propUserAvatar || "/perlogo.jpg?height=32&width=32"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -191,7 +191,7 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
                             <DropdownMenuItem key={i} className="cursor-pointer p-4 hover:bg-hopin-orange/5">
                               <div className="flex items-start gap-4">
                                 <Avatar className="h-9 w-9 border border-hopin-gray/20">
-                                  <AvatarImage src="/placeholder.svg?height=36&width=36" alt="User" />
+                                  <AvatarImage src="/perlogo.jpg?height=36&width=36" alt="User" />
                                   <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">U</AvatarFallback>
                                 </Avatar>
                                 <div className="space-y-1">
@@ -235,7 +235,7 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-8 flex items-center gap-2 pl-2 pr-1">
                           <Avatar className="h-8 w-8 border border-hopin-gray/20">
-                            <AvatarImage src={userAvatar || "/placeholder.svg"} alt={userName} />
+                            <AvatarImage src={userAvatar || "/perlogo.jpg"} alt={userName} />
                             <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                               {userName.charAt(0)}
                             </AvatarFallback>
@@ -247,7 +247,7 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
                       <DropdownMenuContent className="w-56" align="end">
                         <div className="flex items-center gap-2 p-2 border-b border-hopin-gray/20 dark:border-hopin-gray/10">
                           <div className="bg-hopin-orange/10 text-hopin-orange rounded-md px-2 py-1 text-xs font-medium">
-                            {role?.charAt(0).toUpperCase() + role?.slice(1)}
+                            {(role ?? "guest").charAt(0).toUpperCase() + (role ?? "guest").slice(1)}
                           </div>
                           <div className="text-xs text-gray-500">ID: {role?.charAt(0).toUpperCase()}12345</div>
                         </div>
@@ -292,7 +292,7 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
                     {isAuthenticated ? (
                       <div className="flex items-center space-x-4 mb-6 p-4 bg-hopin-orange/5 rounded-lg">
                         <Avatar className="h-10 w-10 border border-hopin-gray/20">
-                          <AvatarImage src={userAvatar || "/placeholder.svg"} alt={userName} />
+                          <AvatarImage src={userAvatar || "/perlogo.jpg"} alt={userName} />
                           <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                             {userName.charAt(0)}
                           </AvatarFallback>

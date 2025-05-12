@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const { db } = await connectToDatabase();
     
-    // Check if user already exists
+    
     const existingUser = await db.collection('users').findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -24,10 +24,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Hash password
     const hashedPassword = await hash(password, 12);
 
-    // Create new user
+ 
     const result = await db.collection('users').insertOne({
       email,
       password: hashedPassword,
@@ -37,7 +36,6 @@ export async function POST(req: NextRequest) {
       updatedAt: new Date()
     });
 
-    // Return user data without password
     return NextResponse.json({
       success: true,
       user: {

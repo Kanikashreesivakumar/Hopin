@@ -20,7 +20,7 @@ import { format } from "date-fns"
 import RoleNavbar from "@/components/role-navbar"
 import Mapbox from "@/components/mapbox"
 
-// Mock data for rides
+
 const mockRides = [
   {
     id: "1",
@@ -31,9 +31,9 @@ const mockRides = [
     pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
     destinationCoordinates: { lat: 28.6139, lng: 77.209 },
     passengers: [
-      { id: 1, name: "Sarah Miller", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43210" },
-      { id: 2, name: "John Davis", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43211" },
-      { id: 3, name: "Emily Chen", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43212" },
+      { id: 1, name: "Saran", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43210" },
+      { id: 2, name: "kani", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43211" },
+      { id: 3, name: "muhammed shibin", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43212" },
     ],
     maxPassengers: 4,
     earnings: 350,
@@ -48,9 +48,9 @@ const mockRides = [
     pickupCoordinates: { lat: 28.6159, lng: 77.2195 },
     destinationCoordinates: { lat: 28.6189, lng: 77.219 },
     passengers: [
-      { id: 4, name: "Michael Brown", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43213" },
-      { id: 5, name: "Jessica Lee", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43214" },
-      { id: 6, name: "David Kim", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43215" },
+      { id: 4, name: "Malar", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43213" },
+      { id: 5, name: "Jenisha ", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43214" },
+      { id: 6, name: "Dinesh", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43215" },
     ],
     maxPassengers: 3,
     earnings: 450,
@@ -65,8 +65,8 @@ const mockRides = [
     pickupCoordinates: { lat: 28.6109, lng: 77.2395 },
     destinationCoordinates: { lat: 28.6119, lng: 77.239 },
     passengers: [
-      { id: 7, name: "Robert Wilson", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43216" },
-      { id: 8, name: "Amanda Taylor", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43217" },
+      { id: 7, name: "suman", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43216" },
+      { id: 8, name: "trisha", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43217" },
     ],
     maxPassengers: 4,
     earnings: 250,
@@ -81,9 +81,9 @@ const mockRides = [
     pickupCoordinates: { lat: 28.6179, lng: 77.2095 },
     destinationCoordinates: { lat: 28.6199, lng: 77.209 },
     passengers: [
-      { id: 9, name: "Thomas Johnson", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43218" },
-      { id: 10, name: "Sophia Martinez", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43219" },
-      { id: 11, name: "Daniel Garcia", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43220" },
+      { id: 9, name: "trisha", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43218" },
+      { id: 10, name: "susmitha", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43219" },
+      { id: 11, name: "pradeep", avatar: "/?perlogo.jpgheight=40&width=40", phone: "+91 98765 43220" },
     ],
     maxPassengers: 3,
     earnings: 300,
@@ -200,7 +200,7 @@ export default function MyRidesPage() {
                         <div className="flex -space-x-2">
                           {ride.passengers.slice(0, 3).map((passenger) => (
                             <Avatar key={passenger.id} className="h-8 w-8 border-2 border-white dark:border-gray-800">
-                              <AvatarImage src={passenger.avatar || "/placeholder.svg"} alt={passenger.name} />
+                              <AvatarImage src={passenger.avatar || "/perlogo.jpg"} alt={passenger.name} />
                               <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                                 {passenger.name.charAt(0)}
                               </AvatarFallback>
@@ -388,7 +388,7 @@ export default function MyRidesPage() {
                             >
                               <div className="flex items-center">
                                 <Avatar className="h-10 w-10 mr-3">
-                                  <AvatarImage src={passenger.avatar || "/placeholder.svg"} alt={passenger.name} />
+                                  <AvatarImage src={passenger.avatar || "/perlogo.jpg"} alt={passenger.name} />
                                   <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                                     {passenger.name.charAt(0)}
                                   </AvatarFallback>

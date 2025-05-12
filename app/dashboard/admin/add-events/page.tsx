@@ -46,7 +46,7 @@ export default function AddEventPage() {
 
   const handleLocationSelect = (location: LatLngLiteral) => {
     setSelectedLocation(location)
-    // In a real app, you would use a geocoding service to get the address
+
     setLocation(`Location at ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`)
   }
 
@@ -55,7 +55,6 @@ export default function AddEventPage() {
     setIsSubmitting(true);
     setShowSuccess(false);
 
-    // Prepare event data
     const eventData = {
       title: eventName,
       date: date ? date.toISOString() : undefined,
@@ -218,7 +217,7 @@ export default function AddEventPage() {
                           {imagePreview ? (
                             <div className="relative w-full">
                               <img
-                                src={imagePreview || "/placeholder.svg"}
+                                src={imagePreview || "/music.jpg"}
                                 alt="Preview"
                                 className="mx-auto h-40 object-cover rounded-md"
                               />

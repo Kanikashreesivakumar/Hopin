@@ -15,13 +15,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Bell, Calendar, Car, Check, Edit, LogOut, Mail, MapPin, Phone, Settings, Star, User } from "lucide-react"
 import DynamicNavbar from "@/components/dynamic-navbar"
 
-// Mock user data
 const userData = {
   id: "user123",
-  name: "Alex Johnson",
+  name: "ajay advik",
   email: "alex.johnson@example.com",
   phone: "(555) 123-4567",
-  avatar: "/placeholder.svg?height=128&width=128",
+  avatar: "/perlogo.jpg?height=128&width=128",
   university: "State University",
   major: "Computer Science",
   graduationYear: "2026",
@@ -137,7 +136,7 @@ export default function DriverProfilePage() {
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center">
                     <Avatar className="h-24 w-24 border-4 border-white dark:border-gray-800 shadow-md">
-                      <AvatarImage src={profile.avatar || "/placeholder.svg"} alt={profile.name} />
+                      <AvatarImage src={profile.avatar || "/perlogo.jpg"} alt={profile.name} />
                       <AvatarFallback>
                         {profile.name
                           .split(" ")

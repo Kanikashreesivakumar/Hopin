@@ -231,7 +231,7 @@ export default function ViewAllRidesPage() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={ride.driverId.avatar || "/placeholder.svg"} alt={ride.driverId.name} />
+                              <AvatarImage src={ride.driverId.avatar || "/perlogo.jpg"} alt={ride.driverId.name} />
                               <AvatarFallback>{ride.driverId.name ? ride.driverId.name.charAt(0) : "?"}</AvatarFallback>
                             </Avatar>
                             <div>

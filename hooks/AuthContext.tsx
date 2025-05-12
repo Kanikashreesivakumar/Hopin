@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
-    // On mount, check localStorage for user
+   
     const storedUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
     if (storedUser) {
       setUser(JSON.parse(storedUser));

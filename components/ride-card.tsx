@@ -43,7 +43,7 @@ export default function RideCard({ ride, onViewRoute, onBookRide, className = ""
           <div className="flex justify-between items-start">
             <div className="flex items-center space-x-2">
               <Avatar>
-                <AvatarImage src={`/placeholder.svg?height=40&width=40`} alt={ride.driverName} />
+                <AvatarImage src={`/perlogo.jpg?height=40&width=40`} alt={ride.driverName} />
                 <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                   {ride.driverName.charAt(0)}
                 </AvatarFallback>

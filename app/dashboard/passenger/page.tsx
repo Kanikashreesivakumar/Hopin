@@ -29,9 +29,9 @@ interface Ride {
 export default function PassengerDashboard() {
   const { user } = useAuth();
   const userName = user?.name || user?.email || "Passenger";
-  const userAvatar = "/placeholder.svg?height=64&width=64"
+  const userAvatar = "/perlogo.jpg?height=64&width=64"
 
-  // Sample upcoming events data
+
   const upcomingEvents = [
     {
       id: 1,
@@ -39,7 +39,7 @@ export default function PassengerDashboard() {
       date: "June 15, 2023",
       time: "6:00 PM",
       location: "Central Park",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/music.jpg?height=200&width=300",
       ridesAvailable: 12,
     },
     {
@@ -48,7 +48,7 @@ export default function PassengerDashboard() {
       date: "July 10, 2023",
       time: "9:00 AM",
       location: "Convention Center",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/music.jpg?height=200&width=300",
       ridesAvailable: 8,
     },
     {
@@ -57,12 +57,11 @@ export default function PassengerDashboard() {
       date: "August 5, 2023",
       time: "11:00 AM",
       location: "Downtown Plaza",
-      image: "/placeholder.svg?height=200&width=300",
+      image: "/music.jpg?height=200&width=300",
       ridesAvailable: 5,
     },
   ]
 
-  // Sample booked rides data
   const bookedRides: Ride[] = [
     {
       id: 1,
@@ -83,7 +82,7 @@ export default function PassengerDashboard() {
   const handleCancelRide = async (rideId: number) => {
     try {
       setIsLoading(true);
-      // Add your API call here
+    
       const response = await fetch(`/api/rides/${rideId}/cancel`, {
         method: 'POST',
         headers: {
@@ -93,8 +92,7 @@ export default function PassengerDashboard() {
 
       if (!response.ok) throw new Error('Failed to cancel ride');
 
-      // Refresh the rides list
-      // Add your refresh logic here
+ 
 
       toast({
         title: "Ride Cancelled",
@@ -326,7 +324,7 @@ export default function PassengerDashboard() {
                 >
                   <div className="h-32 relative">
                     <img
-                      src={event.image || "/placeholder.svg"}
+                      src={event.image || "/music.jpg"}
                       alt={event.title}
                       className="w-full h-full object-cover"
                     />

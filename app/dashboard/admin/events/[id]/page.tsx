@@ -52,7 +52,7 @@ export default function EventDetailsPage() {
   const [event, setEvent] = useState<EventDetails | null>(null)
 
   useEffect(() => {
-    // Mock data - Replace with actual API call
+    
     const mockEvent: EventDetails = {
       id: params.id as string,
       title: "Summer Music Festival",
@@ -64,22 +64,22 @@ export default function EventDetailsPage() {
       status: "upcoming",
       description: "Annual summer music festival featuring local and international artists.",
       organizer: {
-        name: "John Smith",
-        email: "john.smith@example.com",
+        name: "saran raj",
+        email: "saran@example.com",
         phone: "+1 234 567 8900",
-        avatar: "/placeholder.svg"
+        avatar: "/perlogo.jpg"
       },
       drivers: [
         {
           id: "1",
-          name: "Alex Johnson",
+          name: "kajal",
           phone: "+1 234 567 8901",
           assignedPassengers: 3,
           status: "available"
         },
         {
           id: "2",
-          name: "Sarah Miller",
+          name: "Sujith",
           phone: "+1 234 567 8902",
           assignedPassengers: 4,
           status: "en-route"

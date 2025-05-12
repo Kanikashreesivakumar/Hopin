@@ -91,7 +91,7 @@ export default function AuthPage() {
     setError(null);
     setSuccess(null);
 
-    // Validate inputs
+    
     if (!selectedRole || !name || !email || !password || !confirmPassword) {
       setError("Please fill in all required fields");
       return;
@@ -347,7 +347,7 @@ export default function AuthPage() {
                           <Input
                             id="password"
                             type={showPassword ? "text" : "password"}
-                            placeholder="••••••••"
+                            placeholder="password"
                             className="pl-9"
                             value={password}
                             onChange={handlePasswordChange}
@@ -519,7 +519,7 @@ export default function AuthPage() {
                               <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                               <Input
                                 id="name"
-                                placeholder="John Doe"
+                                placeholder="kelvin"
                                 className="pl-9"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -551,7 +551,7 @@ export default function AuthPage() {
                               <Input
                                 id="signup-password"
                                 type={showPassword ? "text" : "password"}
-                                placeholder="••••••••"
+                                placeholder="password"
                                 className="pl-9"
                                 value={password}
                                 onChange={handlePasswordChange}
@@ -613,7 +613,7 @@ export default function AuthPage() {
                               <Input
                                 id="confirm-password"
                                 type={showConfirmPassword ? "text" : "password"}
-                                placeholder="••••••••"
+                                placeholder="password"
                                 className="pl-9"
                                 value={confirmPassword}
                                 onChange={(e) =>

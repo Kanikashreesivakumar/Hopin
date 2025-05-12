@@ -11,7 +11,6 @@ import { Calendar, Clock, Filter, MapPin, Search, Users } from "lucide-react"
 import { format } from "date-fns"
 import RoleNavbar from "@/components/role-navbar"
 
-// Mock data for events
 const mockEvents = [
   {
     id: 1,
@@ -21,7 +20,7 @@ const mockEvents = [
     description: "Annual music festival featuring student bands and performers.",
     attendees: 120,
     ridesAvailable: 12,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
   },
   {
     id: 2,
@@ -31,7 +30,7 @@ const mockEvents = [
     description: "Final match of the inter-college basketball tournament.",
     attendees: 85,
     ridesAvailable: 8,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
   },
   {
     id: 3,
@@ -41,7 +40,7 @@ const mockEvents = [
     description: "Connect with potential employers and explore career opportunities.",
     attendees: 200,
     ridesAvailable: 15,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
   },
   {
     id: 4,
@@ -51,7 +50,7 @@ const mockEvents = [
     description: "24-hour coding competition with prizes for the best projects.",
     attendees: 75,
     ridesAvailable: 5,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
   },
   {
     id: 5,
@@ -61,7 +60,7 @@ const mockEvents = [
     description: "Network with successful alumni and learn from their experiences.",
     attendees: 50,
     ridesAvailable: 6,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
   },
 ]
 

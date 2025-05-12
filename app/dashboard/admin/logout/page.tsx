@@ -12,12 +12,12 @@ export default function LogoutPage() {
   const [countdown, setCountdown] = useState(3)
 
   useEffect(() => {
-    // Simulate logout process
+   
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer)
-          // Redirect to login page after countdown
+          
           setTimeout(() => {
             router.push("/auth")
           }, 500)

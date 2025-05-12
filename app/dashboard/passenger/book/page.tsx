@@ -21,8 +21,8 @@ import Mapbox from "@/components/mapbox"
 const mockRides = [
   {
     id: "1",
-    driverName: "Alex Johnson",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
+    driverName: "Ajay advik",
+    driverAvatar: "/perlogo.jpg?height=40&width=40",
     driverRating: 4.8,
     eventName: "Spring Music Festival",
     eventDate: "2025-04-15T18:00:00",
@@ -39,8 +39,8 @@ const mockRides = [
   },
   {
     id: "2",
-    driverName: "Samantha Lee",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
+    driverName: "Samantha ",
+    driverAvatar: "/perlogo.jpg?height=40&width=40",
     driverRating: 4.9,
     eventName: "Basketball Championship",
     eventDate: "2025-04-20T19:30:00",

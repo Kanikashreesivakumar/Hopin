@@ -43,7 +43,7 @@ const initialEvents = [
     location: "Student Union Building",
     description: "Annual music festival featuring student bands and performers.",
     attendees: 120,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
     status: "upcoming",
   },
   {
@@ -53,7 +53,7 @@ const initialEvents = [
     location: "University Sports Center",
     description: "Final match of the inter-college basketball tournament.",
     attendees: 85,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
     status: "upcoming",
   },
   {
@@ -63,7 +63,7 @@ const initialEvents = [
     location: "Engineering Building",
     description: "Connect with potential employers and explore career opportunities.",
     attendees: 200,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
     status: "upcoming",
   },
   {
@@ -73,7 +73,7 @@ const initialEvents = [
     location: "Computer Science Building",
     description: "24-hour coding competition with prizes for the best projects.",
     attendees: 75,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
     status: "upcoming",
   },
   {
@@ -83,7 +83,7 @@ const initialEvents = [
     location: "Business School Atrium",
     description: "Network with successful alumni and learn from their experiences.",
     attendees: 50,
-    image: "/placeholder.svg?height=200&width=400",
+    image: "/music.jpg?height=200&width=400",
     status: "past",
   },
 ]

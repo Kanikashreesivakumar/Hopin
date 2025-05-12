@@ -27,13 +27,13 @@ export default function ShareLocationPage() {
     pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
     destinationCoordinates: { lat: 28.6139, lng: 77.209 },
     passengers: [
-      { id: 1, name: "Sarah Miller", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43210" },
-      { id: 2, name: "John Davis", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43211" },
-      { id: 3, name: "Emily Chen", avatar: "/placeholder.svg?height=40&width=40", phone: "+91 98765 43212" },
+      { id: 1, name: "Saran", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43210" },
+      { id: 2, name: "kani", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43211" },
+      { id: 3, name: "muhammed shibin", avatar: "/perlogo.jpg?height=40&width=40", phone: "+91 98765 43212" },
     ],
   })
 
-  // Get current location when sharing is enabled
+  
   useEffect(() => {
     let watchId: number | null = null
 
@@ -41,7 +41,7 @@ export default function ShareLocationPage() {
       if (navigator.geolocation) {
         setLocationError(null)
 
-        // Get initial position
+     
         navigator.geolocation.getCurrentPosition(
           (position) => {
             setCurrentLocation({
@@ -56,7 +56,7 @@ export default function ShareLocationPage() {
           },
         )
 
-        // Watch position for real-time updates
+
         watchId = navigator.geolocation.watchPosition(
           (position) => {
             setCurrentLocation({
@@ -218,7 +218,7 @@ export default function ShareLocationPage() {
                     >
                       <div className="flex items-center">
                         <Avatar className="h-10 w-10 mr-3">
-                          <AvatarImage src={passenger.avatar || "/placeholder.svg"} alt={passenger.name} />
+                          <AvatarImage src={passenger.avatar || "/perlogo.jpg"} alt={passenger.name} />
                           <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                             {passenger.name.charAt(0)}
                           </AvatarFallback>

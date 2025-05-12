@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 export default function DriverDashboard() {
   const { user } = useAuth();
   const userName = user?.name || user?.email || "Driver";
-  const userAvatar = "/placeholder.svg?height=64&width=64";
+  const userAvatar = "/perlogo.jpg?height=64&width=64";
   const { logout } = useAuth();
   const router = useRouter ? useRouter() : null;
 
@@ -50,7 +50,7 @@ export default function DriverDashboard() {
       userRating: 4.8,
       eventName: "Summer Music Festival",
       pickupLocation: "Downtown Plaza",
-      status: "pending", // Add status field
+      status: "pending",
     },
     {
       id: 2,
