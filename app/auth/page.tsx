@@ -263,8 +263,8 @@ export default function AuthPage() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] lg:w-[400px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
-              Welcome to <h1 className="text-hopin-orange">HOPIN</h1>
-            </h1>
+              Welcome to </h1><h1 className="text-hopin-orange">HOPIN</h1>
+            
             <p className="text-sm text-muted-foreground">
               Sign in to your account or create a new one
             </p>
