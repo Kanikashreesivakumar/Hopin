@@ -13,7 +13,7 @@ import Mapbox from "@/components/mapbox"
 export default function TrackRide() {
   const currentRide = {
     id: 1,
-    driverName: "Alex Johnson",
+    driverName: "Ajay advik",
     driverRating: 4.8,
     driverPhone: "(555) 123-4567",
     eventName: "Spring Music Festival",
@@ -30,7 +30,6 @@ export default function TrackRide() {
 
   const [driverLocation, setDriverLocation] = useState(currentRide.pickupCoordinates)
 
-  // Simulate driver movement
   useEffect(() => {
     const interval = setInterval(() => {
       setDriverLocation((prev) => ({

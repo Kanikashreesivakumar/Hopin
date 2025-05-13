@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   const recentRides = [
     {
       id: 1,
-      driverName: "Alex Johnson",
+      driverName: "Ajay advik",
       passengerCount: 3,
       eventName: "Spring Concert",
       date: "May 28, 2023",
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
     },
     {
       id: 2,
-      driverName: "Sarah Miller",
+      driverName: "Saran",
       passengerCount: 2,
       eventName: "Tech Meetup",
       date: "May 27, 2023",
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
     },
     {
       id: 3,
-      driverName: "Mike Chen",
+      driverName: "Muhammed shibin",
       passengerCount: 4,
       eventName: "Summer Music Festival",
       date: "June 15, 2023",

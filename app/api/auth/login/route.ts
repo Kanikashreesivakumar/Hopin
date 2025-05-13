@@ -10,21 +10,19 @@ export async function POST(req: NextRequest) {
 
   try {
     const { db } = await connectToDatabase();
-    
-    // Find user by email
+
     const user = await db.collection('users').findOne({ email });
     
     if (!user) {
       return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Verify password
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) {
       return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Return user data without sensitive information
+   
     const { password: _, ...userWithoutPassword } = user;
     return NextResponse.json({ 
       success: true, 

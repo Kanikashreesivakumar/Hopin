@@ -30,7 +30,7 @@ export default function EarningsPage() {
     const mockEarnings: EarningRecord[] = [
       {
         id: "1",
-        date: "2025-05-01", // Today
+        date: "2025-05-01", 
         rides: 8,
         amount: 2455.50,
         tips: 150,
@@ -41,7 +41,7 @@ export default function EarningsPage() {
       },
       {
         id: "2",
-        date: "2025-04-30", // This week
+        date: "2025-04-30", 
         rides: 6,
         amount: 1807.75,
         tips: 100,
@@ -52,7 +52,7 @@ export default function EarningsPage() {
       },
       {
         id: "3",
-        date: "2025-04-15", // This month
+        date: "2025-04-15", 
         rides: 7,
         amount: 2100.00,
         tips: 120,

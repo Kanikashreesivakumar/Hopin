@@ -71,7 +71,6 @@ export default function RoleNavbar({
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Define navigation links based on role
   const getNavLinks = () => {
     switch (role) {
       case "admin":

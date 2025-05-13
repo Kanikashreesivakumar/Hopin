@@ -37,7 +37,7 @@ const mockAlerts = [
     type: "pickup_request",
     passenger: {
       id: 2,
-      name: "John Davis",
+      name: "Jenisha",
       avatar: "/perlogo.jpg?height=40&width=40",
       rating: 4.6,
       phone: "+91 98765 43211",

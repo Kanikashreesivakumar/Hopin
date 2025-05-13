@@ -15,11 +15,10 @@ import RoleNavbar from "@/components/role-navbar"
 import Mapbox from "@/components/mapbox"
 import RideCard from "@/components/ride-card"
 
-// Mock data for rides
 const mockRides = [
   {
     id: 1,
-    driverName: "Alex Johnson",
+    driverName: "Ajay advik",
     driverRating: 4.8,
     eventName: "Spring Music Festival",
     eventDate: "2025-04-15T18:00:00",
@@ -33,7 +32,7 @@ const mockRides = [
   },
   {
     id: 2,
-    driverName: "Samantha Lee",
+    driverName: "Samantha ",
     driverRating: 4.9,
     eventName: "Basketball Championship",
     eventDate: "2025-04-20T19:30:00",
@@ -47,7 +46,7 @@ const mockRides = [
   },
   {
     id: 3,
-    driverName: "Michael Chen",
+    driverName: "Muhammed shibin",
     driverRating: 4.7,
     eventName: "Career Fair",
     eventDate: "2025-04-22T10:00:00",
@@ -61,7 +60,7 @@ const mockRides = [
   },
   {
     id: 4,
-    driverName: "Jessica Williams",
+    driverName: "Jessica ",
     driverRating: 4.6,
     eventName: "Spring Music Festival",
     eventDate: "2025-04-15T18:00:00",
@@ -75,7 +74,7 @@ const mockRides = [
   },
   {
     id: 5,
-    driverName: "David Kim",
+    driverName: "Dinesh",
     driverRating: 5.0,
     eventName: "Hackathon 2025",
     eventDate: "2025-04-25T08:00:00",
@@ -101,7 +100,7 @@ export default function FindRidePage() {
   const handleSearch = () => {
     setIsLoading(true)
 
-    // Simulate API call
+   
     setTimeout(() => {
       let results = mockRides
 

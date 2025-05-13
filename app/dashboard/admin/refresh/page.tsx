@@ -23,20 +23,18 @@ export default function RefreshPage() {
   const handleRefresh = () => {
     setIsRefreshing(true)
 
-    // Simulate API call to refresh data
     setTimeout(() => {
       setIsRefreshing(false)
       setLastRefreshed(new Date())
       setShowSuccess(true)
 
-      // Simulate updated stats
       setRefreshStats({
         events: Math.floor(Math.random() * 10) + 5,
         rides: Math.floor(Math.random() * 20) + 10,
         users: Math.floor(Math.random() * 15) + 5,
       })
 
-      // Hide success message after 3 seconds
+    
       setTimeout(() => {
         setShowSuccess(false)
       }, 3000)

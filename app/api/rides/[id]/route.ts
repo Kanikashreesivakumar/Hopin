@@ -5,7 +5,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Replace with your database query
+
     const ride = {
       id: parseInt(params.id),
       eventName: "Summer Music Festival",

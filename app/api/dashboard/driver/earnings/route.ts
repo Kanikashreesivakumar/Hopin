@@ -6,8 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const { db } = await connectToDatabase();
     
-    // Get driver ID from session/token here
-    // For now using a placeholder
+
     const driverId = 'your-driver-id';
 
     const rides = await db.collection('rides')

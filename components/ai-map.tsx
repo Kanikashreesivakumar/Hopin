@@ -51,7 +51,7 @@ export default function AIMap({
   const [isAIOptimizing, setIsAIOptimizing] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(14)
 
-  // Mock route options
+  
   const routeOptions: RouteOption[] = [
     {
       id: "route1",
@@ -82,7 +82,7 @@ export default function AIMap({
     },
   ]
 
-  // Simulate map loading
+ 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsMapLoaded(true)
@@ -91,7 +91,7 @@ export default function AIMap({
     return () => clearTimeout(timer)
   }, [])
 
-  // Simulate AI route optimization
+
   const optimizeRoute = () => {
     setIsAIOptimizing(true)
     setTimeout(() => {
@@ -103,7 +103,6 @@ export default function AIMap({
     }, 2000)
   }
 
-  // Get traffic color based on level
   const getTrafficColor = (level: "low" | "medium" | "high") => {
     switch (level) {
       case "low":
@@ -119,22 +118,20 @@ export default function AIMap({
 
   return (
     <div className={`relative ${className}`} style={{ height, width }}>
-      {/* Map Container */}
+      
       <div ref={mapRef} className="w-full h-full rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 relative">
-        {/* Placeholder Map */}
+       
         {!isMapLoaded ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="absolute inset-0 bg-[url('/placeholder.svg')] bg-cover bg-center">
-            {/* This would be replaced with actual map implementation */}
-            {/* Simulated map content */}
+            
             <div className="absolute inset-0 flex items-center justify-center opacity-0">
               <span>Map API would render here</span>
             </div>
 
-            {/* Start and End Markers */}
             {startLocation && (
               <div className="absolute top-1/3 left-1/4 transform -translate-x-1/2 -translate-y-1/2">
                 <div className="relative">
@@ -157,7 +154,7 @@ export default function AIMap({
               </div>
             )}
 
-            {/* Driver Location for tracking */}
+      
             {isTracking && driverLocation && (
               <div className="absolute top-1/2 left-1/3 transform -translate-x-1/2 -translate-y-1/2">
                 <div className="relative">
@@ -178,7 +175,6 @@ export default function AIMap({
               </div>
             )}
 
-            {/* Route Path Visualization */}
             {selectedRoute && (
               <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: "none" }}>
                 <path
@@ -195,7 +191,6 @@ export default function AIMap({
               </svg>
             )}
 
-            {/* Traffic Visualization */}
             {trafficEnabled && (
               <>
                 <div className="absolute top-1/4 right-1/3 w-16 h-3 bg-red-500 opacity-50 rounded-full transform rotate-45"></div>
@@ -207,7 +202,7 @@ export default function AIMap({
         )}
       </div>
 
-      {/* Map Controls */}
+
       <div className="absolute top-4 right-4 flex flex-col gap-2">
         <Button variant="secondary" size="icon" className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-md">
           <Layers className="h-4 w-4" />
@@ -241,7 +236,7 @@ export default function AIMap({
         </Button>
       </div>
 
-      {/* Route Options Panel */}
+
       {showRouteOptions && isMapLoaded && (
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -323,7 +318,6 @@ export default function AIMap({
         </motion.div>
       )}
 
-      {/* Traffic Alert */}
       {trafficEnabled && (
         <motion.div
           initial={{ x: -100, opacity: 0 }}
@@ -343,7 +337,7 @@ export default function AIMap({
   )
 }
 
-// Plus and Minus icons for zoom controls
+
 function Plus(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg

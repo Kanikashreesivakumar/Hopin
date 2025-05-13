@@ -34,7 +34,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import RoleNavbar from "@/components/role-navbar"
 import { useRouter } from "next/navigation"
 
-// Mock data for events
+
 const initialEvents = [
   {
     id: "1",

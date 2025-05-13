@@ -26,7 +26,7 @@ export default function Logo({ size = "medium", variant = "default" }: LogoProps
     <div className="flex items-center">
       <div className={`relative ${sizeClasses[size]}`}>
         <svg viewBox="0 0 100 100" className={`${sizeClasses[size]} w-auto`} xmlns="http://www.w3.org/2000/svg">
-          {/* Background Circle */}
+    
           <motion.circle
             cx="50"
             cy="50"
@@ -37,7 +37,7 @@ export default function Logo({ size = "medium", variant = "default" }: LogoProps
             transition={{ duration: 0.5 }}
           />
 
-          {/* Car */}
+
           <motion.path
             d="M30 55C30 50 35 50 40 50H60C65 50 70 50 70 55V65H30V55Z"
             fill={variant === "white" ? "#FFA500" : "#FFFFFF"}
@@ -46,7 +46,6 @@ export default function Logo({ size = "medium", variant = "default" }: LogoProps
             transition={{ duration: 0.5, delay: 0.4 }}
           />
 
-          {/* Wheels */}
           <motion.circle
             cx="40"
             cy="65"
@@ -66,7 +65,6 @@ export default function Logo({ size = "medium", variant = "default" }: LogoProps
             transition={{ duration: 0.5, delay: 0.5 }}
           />
 
-          {/* Map Pin */}
           <motion.path
             d="M50 20C42 20 35 27 35 35C35 45 50 60 50 60C50 60 65 45 65 35C65 27 58 20 50 20ZM50 40C47 40 45 38 45 35C45 32 47 30 50 30C53 30 55 32 55 35C55 38 53 40 50 40Z"
             fill={variant === "white" ? "#FFA500" : "#FFFFFF"}

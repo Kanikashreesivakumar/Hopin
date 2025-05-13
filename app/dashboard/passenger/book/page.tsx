@@ -17,7 +17,6 @@ import { format } from "date-fns"
 import RoleNavbar from "@/components/role-navbar"
 import Mapbox from "@/components/mapbox"
 
-// Mock data for rides
 const mockRides = [
   {
     id: "1",
@@ -72,7 +71,7 @@ export default function BookRidePage() {
   const [showSuccess, setShowSuccess] = useState(false)
 
   useEffect(() => {
-    // Simulate API call to fetch ride details
+    
     setIsLoading(true)
     setTimeout(() => {
       const foundRide = mockRides.find((r) => r.id === rideId)
@@ -84,12 +83,12 @@ export default function BookRidePage() {
   const handleBookRide = () => {
     setIsSubmitting(true)
 
-    // Simulate API call to book ride
+    
     setTimeout(() => {
       setIsSubmitting(false)
       setShowSuccess(true)
 
-      // Redirect after success
+
       setTimeout(() => {
         router.push("/dashboard/passenger")
       }, 3000)

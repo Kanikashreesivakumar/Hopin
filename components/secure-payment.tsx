@@ -65,7 +65,6 @@ export default function SecurePayment({
   const [tokenizedCard, setTokenizedCard] = useState<string | null>(null)
   const [fraudScore, setFraudScore] = useState<number | null>(null)
 
-  // Detect card type based on number
   useEffect(() => {
     if (cardNumber.startsWith("4")) {
       setCardType("visa")
@@ -80,7 +79,6 @@ export default function SecurePayment({
     }
   }, [cardNumber])
 
-  // Simulate tokenization when card details are complete
   useEffect(() => {
     if (cardNumber.length >= 16 && cardholderName.length > 3 && expiry.length === 5 && cvc.length >= 3) {
       // In a real implementation, this would call a secure API to tokenize the card
@@ -132,7 +130,6 @@ export default function SecurePayment({
     e.preventDefault()
     setIsProcessing(true)
 
-    // Simulate payment processing
     setTimeout(() => {
       setIsProcessing(false)
 

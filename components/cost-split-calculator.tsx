@@ -24,18 +24,18 @@ interface CostCalculatorProps {
 }
 
 export default function CostSplitCalculator({ className = "", initialValues, onCalculate }: CostCalculatorProps) {
-  // Inputs
+
   const [costPerKmInput, setCostPerKmInput] = useState(initialValues?.fuelCost || 20)
   const [distance, setDistance] = useState(initialValues?.distance || 25)
   const [passengers, setPassengers] = useState(initialValues?.passengers || 3)
 
-  // Results
+  
   const [costPerPerson, setCostPerPerson] = useState(0)
   const [costPerKm, setCostPerKm] = useState(0)
   const [totalSavings, setTotalSavings] = useState(0)
   const [isCalculating, setIsCalculating] = useState(false)
 
-  // Only calculate on button click
+
   const calculateCosts = () => {
     setIsCalculating(true)
     setTimeout(() => {
@@ -56,10 +56,10 @@ export default function CostSplitCalculator({ className = "", initialValues, onC
     }, 300)
   }
 
-  // Set initial calculation on mount only
+
   useEffect(() => {
     calculateCosts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [])
 
   return (

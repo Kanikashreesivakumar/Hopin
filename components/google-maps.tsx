@@ -7,17 +7,15 @@ import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Navigation, AlertCircle } from "lucide-react"
 
-// Define the google variable type
 declare global {
   interface Window {
     google: any
   }
 }
 
-// Default map center (can be overridden with props)
-const defaultCenter = { lat: 28.6139, lng: 77.209 } // New Delhi
+const defaultCenter = { lat: 28.6139, lng: 77.209 } 
 
-// Map container style
+
 const containerStyle = {
   width: "100%",
   height: "400px",
@@ -72,7 +70,6 @@ export default function GoogleMaps({
 
   const mapRef = useRef<google.maps.Map | null>(null)
 
-  // Load current location if requested
   useEffect(() => {
     if (showCurrentLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -93,7 +90,6 @@ export default function GoogleMaps({
     }
   }, [showCurrentLocation, map])
 
-  // Calculate directions when origin and destination are provided
   useEffect(() => {
     if (isLoaded && showDirections && origin && destination) {
       const directionsService = new window.google.maps.DirectionsService()
@@ -108,7 +104,7 @@ export default function GoogleMaps({
           travelMode: window.google.maps.TravelMode.DRIVING,
           optimizeWaypoints: true,
         },
-        (result, status) => {
+        (result: google.maps.DirectionsResult, status: google.maps.DirectionsStatus) => {
           setIsLoadingDirections(false)
           if (status === window.google.maps.DirectionsStatus.OK) {
             setDirections(result)

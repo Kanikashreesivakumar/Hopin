@@ -60,7 +60,6 @@ const userData = {
   },
 }
 
-// Mock ride history
 const rideHistory = [
   {
     id: "ride1",

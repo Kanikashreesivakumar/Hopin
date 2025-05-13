@@ -82,18 +82,17 @@ export default function SecurePaymentGateway({
     }
   }, [cardNumber])
 
-  // Simulate tokenization when card details are complete
   useEffect(() => {
     if (cardNumber.length >= 16 && cardholderName.length > 3 && expiry.length === 5 && cvc.length >= 3) {
-      // In a real implementation, this would call a secure API to tokenize the card
+
       const mockToken = `tok_${Math.random().toString(36).substring(2, 10)}`
       setTokenizedCard(mockToken)
 
-      // Simulate fraud detection score (0-100, higher is riskier)
-      const mockFraudScore = Math.floor(Math.random() * 30) // Low score for demo
+
+      const mockFraudScore = Math.floor(Math.random() * 30) 
       setFraudScore(mockFraudScore)
 
-      // Clear any previous errors
+     
       setPaymentError(null)
     } else {
       setTokenizedCard(null)
@@ -137,7 +136,6 @@ export default function SecurePaymentGateway({
     e.preventDefault()
     setPaymentError(null)
 
-    // Validate card details
     if (paymentMethod === "card") {
       if (!cardNumber || !cardholderName || !expiry || !cvc) {
         setPaymentError("Please fill in all card details")
@@ -152,9 +150,8 @@ export default function SecurePaymentGateway({
 
     setIsProcessing(true)
 
-    // Simulate payment processing with a small chance of failure
     setTimeout(() => {
-      const isSuccessful = Math.random() > 0.1 // 90% success rate
+      const isSuccessful = Math.random() > 0.1 
 
       if (isSuccessful) {
         setPaymentSuccess(true)

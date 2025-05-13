@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-// GET /api/admin/events - Fetches all events
+
 export async function GET(req: NextRequest) {
   try {
     const { db } = await connectToDatabase();

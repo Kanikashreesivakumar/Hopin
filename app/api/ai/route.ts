@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use gemini-2.0-flash model
+  
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const systemPrompt =
       "You are HOPIN Assistant, a helpful and friendly AI chatbot for a carpooling and ride-sharing platform. Help users with ride-related queries, booking assistance, and general platform guidance.";

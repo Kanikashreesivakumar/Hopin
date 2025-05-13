@@ -46,7 +46,7 @@ export default function DriverDashboard() {
   const [rideRequests, setRideRequests] = useState([
     {
       id: 1,
-      userName: "Sarah Miller",
+      userName: "Saran",
       userRating: 4.8,
       eventName: "Summer Music Festival",
       pickupLocation: "Downtown Plaza",
@@ -54,7 +54,7 @@ export default function DriverDashboard() {
     },
     {
       id: 2,
-      userName: "Mike Chen",
+      userName: "Malinga",
       userRating: 4.9,
       eventName: "Summer Music Festival",
       pickupLocation: "West End Avenue",

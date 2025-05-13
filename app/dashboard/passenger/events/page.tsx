@@ -72,7 +72,7 @@ export default function ViewEventsPage() {
   const handleSearch = () => {
     setIsLoading(true)
 
-    // Simulate API call
+  
     setTimeout(() => {
       const results = mockEvents.filter(
         (event) =>
