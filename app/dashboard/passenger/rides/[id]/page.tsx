@@ -20,7 +20,6 @@ import {
 import { Calendar, Car, ChevronLeft, Clock, MapPin, Phone, Star, Loader2 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 
-// Define the Ride interface if not already defined elsewhere
 interface Ride {
   id: string;
   eventName: string;

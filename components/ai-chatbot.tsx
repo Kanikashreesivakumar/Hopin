@@ -30,7 +30,6 @@ export default function AIChatbot() {
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
@@ -91,11 +90,10 @@ export default function AIChatbot() {
     }
   }
 
-  // Helper to format bot message: *text* => bold heading, rest as paragraph
   function formatBotMessage(text: string) {
-    // Split by newlines for paragraphs
+    
     return text.split(/\n+/).map((line, idx) => {
-      // Replace all *text* with bold heading style
+
       const parts = [];
       let lastIndex = 0;
       const regex = /\*(.+?)\*/g;
@@ -147,7 +145,7 @@ export default function AIChatbot() {
             transition={{ duration: 0.2 }}
             className="fixed bottom-6 right-6 w-80 sm:w-96 h-[550px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden border border-hopin-gray/20 dark:border-hopin-gray/10"
           >
-            {/* Chat Header */}
+           
             <div className="bg-hopin-orange text-white p-4 flex justify-between items-center">
               <div className="flex items-center">
                 <Avatar className="h-8 w-8 mr-2 border-2 border-white">
@@ -169,7 +167,7 @@ export default function AIChatbot() {
               </Button>
             </div>
 
-            {/* Chat Messages */}
+
             <div className="p-4 h-[380px] overflow-y-auto">
               {messages.map((message) => (
                 <div
@@ -233,7 +231,7 @@ export default function AIChatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Chat Input */}
+          
             <div className="p-4 border-t border-hopin-gray/20 dark:border-hopin-gray/10">
               <div className="flex">
                 <Input

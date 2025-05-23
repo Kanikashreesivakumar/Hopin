@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "HOPIN - AI-Powered Event Ride-Sharing",
   icons: {
-    icon: '/logo.png', // Make sure logo.png is in the public folder
+    icon: '/logo.png', 
   },
 }
 

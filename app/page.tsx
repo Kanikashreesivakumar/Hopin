@@ -31,26 +31,23 @@ export default function Home() {
   const carModelRef = useRef<THREE.Group | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  // Simple Three.js car model
+ 
   useEffect(() => {
     if (!containerRef.current) return
 
-    // Initialize Three.js scene
     const scene = new THREE.Scene()
     sceneRef.current = scene
 
-    // Camera
+
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
     camera.position.z = 5
     cameraRef.current = camera
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
     renderer.setSize(200, 200)
     containerRef.current.appendChild(renderer.domElement)
     rendererRef.current = renderer
 
-    // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
     scene.add(ambientLight)
 
@@ -58,23 +55,21 @@ export default function Home() {
     directionalLight.position.set(0, 1, 1)
     scene.add(directionalLight)
 
-    // Simple car model
     const carGroup = new THREE.Group()
 
-    // Car body
     const bodyGeometry = new THREE.BoxGeometry(2, 0.5, 1)
     const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 })
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial)
     carGroup.add(body)
 
-    // Car top
+    
     const topGeometry = new THREE.BoxGeometry(1.2, 0.4, 0.8)
     const topMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 })
     const top = new THREE.Mesh(topGeometry, topMaterial)
     top.position.y = 0.45
     carGroup.add(top)
 
-    // Wheels
+   
     const wheelGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32)
     const wheelMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 })
 
@@ -101,7 +96,7 @@ export default function Home() {
     scene.add(carGroup)
     carModelRef.current = carGroup
 
-    // Animation loop
+ 
     const animate = () => {
       requestAnimationFrame(animate)
 
@@ -114,7 +109,7 @@ export default function Home() {
 
     animate()
 
-    // Cleanup
+    
     return () => {
       if (containerRef.current && rendererRef.current) {
         containerRef.current.removeChild(rendererRef.current.domElement)
@@ -122,7 +117,7 @@ export default function Home() {
     }
   }, [])
 
-  // Fetch events from API
+  
   const [events, setEvents] = useState<any[]>([]);
   useEffect(() => {
     async function fetchEvents() {
@@ -133,11 +128,11 @@ export default function Home() {
           setEvents(data.events.map((event: any) => ({
             ...event,
             id: event._id,
-            title: event.name, // for compatibility with old code
+            title: event.name, 
           })));
         }
       } catch (err) {
-        // Optionally handle error
+       
       }
     }
     fetchEvents();
@@ -145,7 +140,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
+    
       <header className="py-4 px-6 flex justify-between items-center">
         <Logo />
         <div className="flex items-center gap-4">
@@ -161,9 +156,9 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
+      
       <section className="relative py-20 overflow-hidden">
-        {/* Wave background - Fixed the CSS classes with proper spacing */}
+        
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-hopin-orange/5 to-transparent"></div>
           <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"></div>
@@ -218,7 +213,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section ref={howItWorksRef} className="py-20 bg-gray-50 dark:bg-gray-800/50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -242,7 +236,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Driver Card */}
+           
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHowItWorksInView ? { opacity: 1, y: 0 } : {}}
@@ -277,7 +271,7 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Passenger Card */}
+           
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHowItWorksInView ? { opacity: 1, y: 0 } : {}}
@@ -312,7 +306,7 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Admin Card */}
+           
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={isHowItWorksInView ? { opacity: 1, y: 0 } : {}}
@@ -350,7 +344,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live Events Showcase */}
+     
       <section ref={eventsRef} className="py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -556,7 +550,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Cost Split Calculator UI */}
+
       <section ref={calculatorRef} className="py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -589,7 +583,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI Chatbot Integration */}
+   
       <div className="fixed bottom-6 right-6 z-50">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -610,7 +604,7 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Footer */}
+
       <footer className="bg-gray-50 dark:bg-gray-800/50 py-12">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

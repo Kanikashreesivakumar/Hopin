@@ -36,25 +36,24 @@ export default function DriverDashboard() {
 
   const upcomingRides = driverRides;
 
-  // Sample ride requests data
   const rideRequests = [
     {
       id: 1,
-      userName: "Sarah Miller",
+      userName: "Saran",
       userRating: 4.8,
       eventName: "Summer Music Festival",
       pickupLocation: "Downtown Plaza",
     },
     {
       id: 2,
-      userName: "Mike Chen",
+      userName: "Muhammed shibin",
       userRating: 4.9,
       eventName: "Summer Music Festival",
       pickupLocation: "West End Avenue",
     },
   ]
 
-  // Sample earnings data
+
   const earningsData = {
     today: 0,
     thisWeek: 800,

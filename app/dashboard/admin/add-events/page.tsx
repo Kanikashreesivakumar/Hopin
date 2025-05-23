@@ -53,7 +53,7 @@ export default function AddEventPage() {
 
   const handleLocationSelect = (location: LatLngLiteral) => {
     setSelectedLocation(location)
-    // In a real app, you would use a geocoding service to get the address
+   
     setLocation(`Location at ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`)
   }
 

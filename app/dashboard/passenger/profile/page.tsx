@@ -29,7 +29,7 @@ import {
 } from "lucide-react"
 
 
-// Mock user data
+
 const userData = {
   id: "user123",
   name: "Emma Wilson",

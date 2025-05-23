@@ -18,7 +18,7 @@ import { Card } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
 
-// Mock data for events
+
 const mockEvents = [
   { id: 1, name: "Summer Music Festival", date: "2025-06-15T18:00:00" },
   { id: 2, name: "Basketball Championship", date: "2025-06-20T19:30:00" },
@@ -44,7 +44,7 @@ export default function OfferRidePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // This would connect to backend in a real app
+
     setShowSuccess(true)
     setTimeout(() => {
       setShowSuccess(false)

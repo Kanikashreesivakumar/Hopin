@@ -27,7 +27,7 @@ export default function FindRidePage() {
   const [isFetching, setIsFetching] = useState(true)
 
   useEffect(() => {
-    // Fetch rides from API
+    
     const fetchRides = async () => {
       setIsFetching(true)
       try {

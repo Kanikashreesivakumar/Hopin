@@ -32,7 +32,7 @@ export default function ShareLocationPage() {
     ],
   })
 
-  // Get current location when sharing is enabled
+  
   useEffect(() => {
     let watchId: number | null = null
 
@@ -40,7 +40,7 @@ export default function ShareLocationPage() {
       if (navigator.geolocation) {
         setLocationError(null)
 
-        // Get initial position
+        
         navigator.geolocation.getCurrentPosition(
           (position) => {
             setCurrentLocation({
@@ -55,7 +55,7 @@ export default function ShareLocationPage() {
           },
         )
 
-        // Watch position for real-time updates
+  
         watchId = navigator.geolocation.watchPosition(
           (position) => {
             setCurrentLocation({
@@ -75,7 +75,6 @@ export default function ShareLocationPage() {
       }
     }
 
-    // Cleanup function to stop watching location
     return () => {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId)
@@ -97,7 +96,7 @@ export default function ShareLocationPage() {
         })
         .catch((error) => console.log("Error sharing", error))
     } else {
-      // Fallback for browsers that don't support the Web Share API
+
       navigator.clipboard
         .writeText("https://hopin.app/track/123456")
         .then(() => alert("Location link copied to clipboard!"))

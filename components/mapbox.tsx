@@ -6,7 +6,7 @@ import "mapbox-gl/dist/mapbox-gl.css"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 
-// Initialize Mapbox with your access token
+
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || ""
 
 interface MapboxProps {
@@ -54,7 +54,7 @@ export default function Mapbox({
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: currentLocation || origin || destination || [77.209, 28.6139], // Default to Delhi if no location
+      center: currentLocation || origin || destination || [77.209, 28.6139], 
       zoom: zoom,
     })
 
@@ -116,7 +116,7 @@ export default function Mapbox({
     }
   }, [currentLocation, destination, onLocationSelect, origin, showTraffic, zoom])
 
-  // Add markers
+ 
   useEffect(() => {
     if (!map.current || !markers.length) return
 
@@ -137,7 +137,7 @@ export default function Mapbox({
       const mapboxMarker = new mapboxgl.Marker(el)
         .setLngLat([marker.position.lng, marker.position.lat])
         .setPopup(popup)
-        .addTo(map.current)
+        .addTo(map.current!)
 
       markerElements.push(mapboxMarker)
     })
@@ -147,7 +147,7 @@ export default function Mapbox({
     }
   }, [markers, map.current])
 
-  // Add current location marker
+
   useEffect(() => {
     if (!map.current || !currentLocation) return
 
@@ -170,7 +170,7 @@ export default function Mapbox({
     }
   }, [currentLocation])
 
-  // Show directions
+ 
   useEffect(() => {
     if (!map.current || !showDirections || !origin || !destination) return
 
@@ -193,13 +193,12 @@ export default function Mapbox({
     const drawRoute = (route: any, index: number) => {
       if (!map.current) return
 
-      // Remove previous routes
+     
       if (map.current.getSource("route")) {
         map.current.removeLayer("route")
         map.current.removeSource("route")
       }
 
-      // Add the route source and layer
       map.current.addSource("route", {
         type: "geojson",
         data: {
@@ -224,7 +223,7 @@ export default function Mapbox({
         },
       })
 
-      // Fit the map to the route
+      
       const bounds = new mapboxgl.LngLatBounds()
       route.geometry.coordinates.forEach((coord: [number, number]) => {
         bounds.extend(coord)
@@ -245,13 +244,13 @@ export default function Mapbox({
   const drawRoute = (route: any, index: number) => {
     if (!map.current) return
 
-    // Remove previous routes
+
     if (map.current.getSource("route")) {
       map.current.removeLayer("route")
       map.current.removeSource("route")
     }
 
-    // Add the route source and layer
+    
     map.current.addSource("route", {
       type: "geojson",
       data: {
@@ -276,7 +275,6 @@ export default function Mapbox({
       },
     })
 
-    // Fit the map to the route
     const bounds = new mapboxgl.LngLatBounds()
     route.geometry.coordinates.forEach((coord: [number, number]) => {
       bounds.extend(coord)

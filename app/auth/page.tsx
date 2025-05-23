@@ -209,9 +209,9 @@ export default function AuthPage() {
         return;
       }
       setSuccess("Login successful! Redirecting...");
-      login(data.user, data.token); // Save user and token in context
+      login(data.user, data.token); 
       setTimeout(() => {
-        router.push(`/dashboard/${data.user.role}`); // Redirect to dashboard/role
+        router.push(`/dashboard/${data.user.role}`); 
       }, 1500);
     } catch (err) {
       setError("Login failed. Please try again.");
