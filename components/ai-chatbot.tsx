@@ -188,11 +188,11 @@ export default function AIChatbot() {
                         : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     }`}
                   >
-                    <p className="text-sm">
+                    <div className="text-sm">
                       {message.sender === "bot"
                         ? formatBotMessage(message.content)
                         : message.content}
-                    </p>
+                    </div>
                     <div
                       className={`text-xs mt-1 ${
                         message.sender === "user" ? "text-white/70" : "text-gray-500 dark:text-gray-400"

@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Calendar as CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarIcon, Clock, ImageIcon, MapPin, Plus, Upload } from "lucide-react"
+import { Clock, ImageIcon, MapPin, Plus, Upload } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
@@ -63,7 +64,7 @@ export default function AddEventPage() {
 
     let imageUrl: string | undefined = undefined;
     if (imageFile) {
-      // Upload to Supabase Storage
+  
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${eventName.replace(/\s+/g, "-").toLowerCase()}-${Date.now()}.${fileExt}`;
       const { data, error } = await supabase.storage.from("event-banners").upload(fileName, imageFile, {
@@ -75,12 +76,11 @@ export default function AddEventPage() {
         setIsSubmitting(false);
         return;
       }
-      // Get public URL
+   
       const { data: publicUrlData } = supabase.storage.from("event-banners").getPublicUrl(fileName);
       imageUrl = publicUrlData?.publicUrl;
     }
 
-    // Prepare event data
     const eventData = {
       title: eventName,
       date: date ? date.toISOString() : undefined,
@@ -166,16 +166,30 @@ export default function AddEventPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label>Date</Label>
+                      <Label htmlFor="date">Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="w-full justify-start text-left font-normal">
+                          <Button
+                            id="date"
+                            variant="outline"
+                            className={`w-full justify-start text-left font-normal ${
+                              !date && "text-muted-foreground"
+                            }`}
+                          >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {date ? format(date, "PPP") : <span>Pick a date</span>}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
-                          <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                          <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={(newDate: Date | undefined) => {
+                              setDate(newDate)
+                            }}
+                            initialFocus
+                            disabled={(date) => date < new Date()}
+                          />
                         </PopoverContent>
                       </Popover>
                     </div>
@@ -211,18 +225,7 @@ export default function AddEventPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <Label>Select Location on Map</Label>
-                    <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-                      <GoogleMaps
-                        height="300px"
-                        onLocationSelect={handleLocationSelect}
-                        markers={selectedLocation ? [{ position: selectedLocation }] : []}
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Click on the map to set the exact event location</p>
-                  </div>
-
+               
                   <div>
                     <Label htmlFor="description">Event Description</Label>
                     <Textarea

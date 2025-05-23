@@ -11,8 +11,9 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "HOPIN - AI-Powered Event Ride-Sharing",
-  description: "Find your next event ride with HOPIN",
-  
+  icons: {
+    icon: '/logo.png', // Make sure logo.png is in the public folder
+  },
 }
 
 export default function RootLayout({
