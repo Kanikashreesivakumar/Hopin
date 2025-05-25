@@ -40,7 +40,7 @@ export default function MyRidesPage() {
       .finally(() => setIsLoading(false));
   }, [user?.id]);
 
-  // Filter rides based on active tab
+  // Filter rides based on active tab use backedn data e filtering
   const filteredRides = activeTab === "all" ? rides : rides.filter((ride) => ride.status === activeTab)
 
   return (

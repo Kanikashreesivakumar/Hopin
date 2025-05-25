@@ -155,7 +155,7 @@ export default function Home() {
           </Button>
 
           <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-              <Link href="/signup">Sign Up</Link>
+              <Link href="/auth">Sign Up</Link>
             </Button>
       
         </div>

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Check } from "lucide-react"
+import { useAuth } from "@/hooks/AuthContext"
 
 // Mock data for events
 const mockEvents = [
@@ -29,6 +30,7 @@ const mockEvents = [
 
 export default function OfferRidePage() {
   const router = useRouter()
+  const { user } = useAuth();
   const [userName] = useState("Alex Johnson")
   const [userAvatar] = useState("/placeholder.svg?height=64&width=64")
 
@@ -36,20 +38,76 @@ export default function OfferRidePage() {
   const [time, setTime] = useState("")
   const [event, setEvent] = useState("")
   const [pickupLocation, setPickupLocation] = useState("")
+  const [endLocation, setEndLocation] = useState("");
   const [seats, setSeats] = useState("3")
   const [costPerSeat, setCostPerSeat] = useState("")
   const [carModel, setCarModel] = useState("")
   const [notes, setNotes] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
+  const [events, setEvents] = useState<{ id: number; title: string; date?: string; time?: string; location?: string }[]>([])
+  const [selectedEventDetails, setSelectedEventDetails] = useState<{ date?: string; time?: string; location?: string; id?: number } | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // This would connect to backend in a real app
-    setShowSuccess(true)
-    setTimeout(() => {
-      setShowSuccess(false)
-      router.push("/dashboard/driver")
-    }, 2000)
+  useEffect(() => {
+    async function fetchEvents() {
+      const res = await fetch("/api/driver/offer", { method: "GET" })
+      const data = await res.json()
+      if (data.success && data.events) setEvents(data.events)
+    }
+    fetchEvents()
+  }, [])
+
+  useEffect(() => {
+    const found = events.find(ev => ev.title === event);
+    setSelectedEventDetails(found ? { date: found.date, time: found.time, location: found.location, id: found.id } : null);
+    setEndLocation(found?.location || "");
+  }, [event, events]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowSuccess(false);
+    if (!user) {
+      alert("You must be logged in as a driver to offer a ride.");
+      return;
+    }
+    const eventObj = events.find(ev => ev.title === event);
+    const event_id = eventObj?.id;
+    const end_location = eventObj?.location;
+
+    // Combine date and time into a full ISO timestamp string
+    let departure_time = undefined;
+    if (date && time) {
+      const [hours, minutes] = time.split(":");
+      const dt = new Date(date);
+      dt.setHours(Number(hours), Number(minutes), 0, 0);
+      departure_time = dt.toISOString();
+    }
+
+    const body = {
+      driver_id: user.id,
+      event_id,
+      start_location: pickupLocation,
+      end_location,
+      departure_time,
+      available_seats: seats,
+      cost: costPerSeat,
+      notes,
+    };
+
+    const response = await fetch("/api/driver/offer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    if (data.success) {
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        router.push("/dashboard/driver");
+      }, 2000);
+    } else {
+      alert(data.error || "Failed to submit ride offer");
+    }
   }
 
   return (
@@ -94,9 +152,9 @@ export default function OfferRidePage() {
                     <SelectValue placeholder="Select event" />
                   </SelectTrigger>
                   <SelectContent>
-                    {mockEvents.map((event) => (
-                      <SelectItem key={event.id} value={event.name}>
-                        {event.name}
+                    {events.map((event) => (
+                      <SelectItem key={event.id} value={event.title}>
+                        {event.title}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -114,7 +172,13 @@ export default function OfferRidePage() {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                      <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        initialFocus
+                        disabled={selectedEventDetails?.date ? (d) => selectedEventDetails.date ? d > new Date(selectedEventDetails.date) : false : undefined}
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -130,6 +194,14 @@ export default function OfferRidePage() {
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
                       required
+                      max={
+                        selectedEventDetails?.date &&
+                        date &&
+                        format(date, 'yyyy-MM-dd') === selectedEventDetails.date &&
+                        selectedEventDetails.time
+                          ? selectedEventDetails.time
+                          : undefined
+                      }
                     />
                   </div>
                 </div>
@@ -150,7 +222,7 @@ export default function OfferRidePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="seats">Available Seats</Label>
                   <div className="relative">
@@ -188,20 +260,7 @@ export default function OfferRidePage() {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="car">Car Model</Label>
-                  <div className="relative">
-                    <Car className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="car"
-                      placeholder="e.g. Honda Civic"
-                      className="pl-9"
-                      value={carModel}
-                      onChange={(e) => setCarModel(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
+               
               </div>
 
               <div>

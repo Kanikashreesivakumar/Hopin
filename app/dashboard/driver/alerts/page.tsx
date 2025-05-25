@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell, Calendar, Car, Check, Clock, MapPin, Phone, Star, X, User } from "lucide-react"
 import { format } from "date-fns"
-import DynamicNavbar from "@/components/dynamic-navbar"
 
 // Mock data for pickup alerts
 const mockAlerts = [
@@ -119,7 +118,6 @@ export default function PickupAlertsPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      <DynamicNavbar role="driver" userName="Alex Johnson" />
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
