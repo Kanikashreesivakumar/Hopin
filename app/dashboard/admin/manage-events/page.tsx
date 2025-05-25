@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation"
 
 
 interface Event {
-  _id: string
+  id: string
   title: string
   date: string | Date
   location: string
@@ -136,7 +136,7 @@ export default function ManageEventsPage() {
 
     try {
       console.log("Editing event:", editingEvent)
-      const response = await fetch(`/api/admin/events?eventId=${editingEvent._id}`, {
+      const response = await fetch(`/api/admin/events?eventId=${editingEvent.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -328,7 +328,7 @@ export default function ManageEventsPage() {
               <AnimatePresence>
                 {filteredEvents.map((event) => (
                   <motion.div
-                    key={event._id}
+                    key={event.id}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
@@ -364,7 +364,7 @@ export default function ManageEventsPage() {
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="text-red-600 dark:text-red-400"
-                                onClick={() => handleDeleteEvent(event._id)}
+                                onClick={() => handleDeleteEvent(event.id)}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete
