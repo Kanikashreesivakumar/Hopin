@@ -54,11 +54,11 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
   const [notificationCount, setNotificationCount] = useState(3)
   const router = useRouter();
 
-  // Use props if provided, otherwise fallback to context
   const isAuthenticated = !!user || !!propRole
   const role = propRole || (user?.role as UserRole | undefined)
   const userName = propUserName || user?.name || "Guest"
-  const userAvatar = propUserAvatar || user?.avatar || "/placeholder.svg?height=32&width=32"
+
+  const userAvatar = propUserAvatar || "/placeholder.svg?height=32&width=32"
 
   useEffect(() => {
     const handleScroll = () => {

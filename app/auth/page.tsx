@@ -209,9 +209,9 @@ export default function AuthPage() {
         return;
       }
       setSuccess("Login successful! Redirecting...");
-      login(data.user, data.token); // Save user and token in context
+      login(data.user, data.token); 
       setTimeout(() => {
-        router.push(`/dashboard/${data.user.role}`); // Redirect to dashboard/role
+        router.push(`/dashboard/${data.user.role}`); 
       }, 1500);
     } catch (err) {
       setError("Login failed. Please try again.");
@@ -227,7 +227,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 bg-gradient-to-br from-green-600 via-violet-600 to-pink-500"
+          className="absolute inset-0 bg-[url('/loclogo.jpg?height=1080&width=1920')] bg-cover "
         />
 
         <div className="relative z-20 flex items-center text-lg font-medium">
@@ -255,7 +255,7 @@ export default function AuthPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.1 }}
           transition={{ duration: 1 }}
-          className="absolute top-0 left-0 z-10 h-full w-full bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover opacity-10"
+          className="absolute top-0 left-0 z-10 h-full w-full "
         />
       </div>
 

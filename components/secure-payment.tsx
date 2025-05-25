@@ -80,15 +80,15 @@ export default function SecurePayment({
     }
   }, [cardNumber])
 
-  // Simulate tokenization when card details are complete
+  
   useEffect(() => {
     if (cardNumber.length >= 16 && cardholderName.length > 3 && expiry.length === 5 && cvc.length >= 3) {
-      // In a real implementation, this would call a secure API to tokenize the card
+     
       const mockToken = `tok_${Math.random().toString(36).substring(2, 10)}`
       setTokenizedCard(mockToken)
 
-      // Simulate fraud detection score (0-100, higher is riskier)
-      const mockFraudScore = Math.floor(Math.random() * 30) // Low score for demo
+    
+      const mockFraudScore = Math.floor(Math.random() * 30) 
       setFraudScore(mockFraudScore)
     } else {
       setTokenizedCard(null)
@@ -132,7 +132,7 @@ export default function SecurePayment({
     e.preventDefault()
     setIsProcessing(true)
 
-    // Simulate payment processing
+    
     setTimeout(() => {
       setIsProcessing(false)
 
@@ -201,7 +201,7 @@ export default function SecurePayment({
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Card visualization */}
+         
                 <div className="relative h-44 w-full perspective">
                   <motion.div
                     className={`absolute inset-0 rounded-xl p-6 shadow-md bg-gradient-to-br ${
@@ -242,7 +242,7 @@ export default function SecurePayment({
                     </div>
                   </motion.div>
 
-                  {/* Card back */}
+                  
                   <motion.div
                     className="absolute inset-0 rounded-xl p-6 shadow-md bg-gradient-to-br from-gray-700 to-gray-900 text-white"
                     initial={{ rotateY: 180 }}

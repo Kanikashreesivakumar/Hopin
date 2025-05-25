@@ -30,7 +30,7 @@ export default function TrackRide() {
 
   const [driverLocation, setDriverLocation] = useState(currentRide.pickupCoordinates)
 
-  // Simulate driver movement
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDriverLocation((prev) => ({

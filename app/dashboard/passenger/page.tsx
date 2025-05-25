@@ -30,7 +30,7 @@ export default function PassengerDashboard() {
   const userName = user?.name || user?.email || "Passenger";
   const userAvatar = "/placeholder.svg?height=64&width=64"
 
-  // Sample upcoming events data
+
   const upcomingEvents = [
     {
       id: 1,
@@ -61,7 +61,6 @@ export default function PassengerDashboard() {
     },
   ]
 
-  // Sample booked rides data
   const bookedRides: Ride[] = [
     {
       id: 1,
@@ -82,7 +81,7 @@ export default function PassengerDashboard() {
   const handleCancelRide = async (rideId: number) => {
     try {
       setIsLoading(true);
-      // Add your API call here
+      
       const response = await fetch(`/api/rides/${rideId}/cancel`, {
         method: 'POST',
         headers: {
@@ -92,8 +91,6 @@ export default function PassengerDashboard() {
 
       if (!response.ok) throw new Error('Failed to cancel ride');
 
-      // Refresh the rides list
-      // Add your refresh logic here
 
       toast({
         title: "Ride Cancelled",
@@ -207,7 +204,7 @@ export default function PassengerDashboard() {
                           variant="outline" 
                           className="text-hopin-orange border-hopin-orange hover:bg-hopin-orange/10"
                           onClick={() => {
-                            // Add any pre-navigation logic here
+                        
                             router.push(`/dashboard/passenger/rides/${ride.id}`);
                           }}
                           disabled={ride.status === 'cancelled'}

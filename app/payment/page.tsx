@@ -8,7 +8,7 @@ import SecurePaymentGateway from "@/components/secure-payment-gateway"
 export default function Payment() {
   const router = useRouter()
 
-  // Mock ride details
+ 
   const rideDetails = {
     eventName: "Spring Music Festival",
     driverName: "Alex Johnson",
@@ -22,7 +22,6 @@ export default function Payment() {
 
   const handlePaymentComplete = (paymentInfo: any) => {
     console.log("Payment completed:", paymentInfo)
-    // In a real app, this would redirect to a confirmation page
     router.push("/track-ride")
   }
 

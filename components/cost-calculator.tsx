@@ -20,15 +20,14 @@ export default function CostCalculator({ className }: CostCalculatorProps) {
   const [totalSavings, setTotalSavings] = useState(0)
 
   useEffect(() => {
-    // Calculate cost per person
+    
     const perPerson = fuelCost / passengers
     setCostPerPerson(perPerson)
 
-    // Calculate cost per km
+   
     const perKm = fuelCost / distance
     setCostPerKm(perKm)
 
-    // Calculate total savings (what would have been paid if everyone drove separately)
     const savings = fuelCost * (passengers - 1)
     setTotalSavings(savings)
   }, [fuelCost, distance, passengers])

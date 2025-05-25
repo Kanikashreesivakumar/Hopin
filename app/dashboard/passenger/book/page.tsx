@@ -16,7 +16,7 @@ import { Calendar, Car, Check, Clock, CreditCard, MapPin, Star, Users } from "lu
 import { format } from "date-fns"
 import Mapbox from "@/components/mapbox"
 
-// Mock data for rides
+
 const mockRides = [
   {
     id: "1",
