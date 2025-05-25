@@ -10,7 +10,7 @@ export async function GET(
     const { data: rides, error } = await supabase
       .from('rides')
       .select('*')
-      .eq('user', params.id)
+      .eq('driver_id', params.id)
     if (error) throw error
     return NextResponse.json({ success: true, data: rides })
   } catch (error) {
