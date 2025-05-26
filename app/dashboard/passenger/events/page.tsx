@@ -154,7 +154,7 @@ export default function ViewEventsPage() {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-2 right-2">
-                      <Badge className="bg-hopin-orange text-white">{event.ridesAvailable !== undefined ? `${event.ridesAvailable} rides available` : (event.rides ? `${event.rides} rides` : "Rides info")}</Badge>
+                      <Badge className="bg-hopin-orange text-white">{event.ridesAvailable !== undefined ? `${event.ridesAvailable} rides available` : (event.rides ? `${event.rides} rides` : "Rides")}</Badge>
                     </div>
                   </div>
                   <CardContent className="p-4">
@@ -166,7 +166,7 @@ export default function ViewEventsPage() {
                       </div>
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         <Clock className="h-4 w-4 mr-2" />
-                        <span>{format(new Date(event.date), "h:mm a")}</span>
+                        <span>{event.time}</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                         <MapPin className="h-4 w-4 mr-2" />
@@ -179,13 +179,13 @@ export default function ViewEventsPage() {
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{event.description}</p>
                     <div className="flex gap-2">
-                      <Button
+                      {/* <Button
                         variant="outline"
                         className="flex-1 border-hopin-orange text-hopin-orange hover:bg-hopin-orange/10"
                         asChild
                       >
                         <Link href={`/dashboard/passenger/events/${event.id || event._id}`}>View Details</Link>
-                      </Button>
+                      </Button> */}
                       <Button className="flex-1 bg-hopin-orange hover:bg-hopin-orange-dark text-white" asChild>
                         <Link href={`/dashboard/passenger/find?event=${event.id || event._id}`}>Find Rides</Link>
                       </Button>

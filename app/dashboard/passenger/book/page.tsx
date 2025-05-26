@@ -17,51 +17,12 @@ import { format } from "date-fns"
 import Mapbox from "@/components/mapbox"
 
 
-const mockRides = [
-  {
-    id: "1",
-    driverName: "Alex Johnson",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.8,
-    eventName: "Spring Music Festival",
-    eventDate: "2025-04-15T18:00:00",
-    departureTime: "2025-04-15T17:00:00",
-    pickupLocation: "Student Union Building",
-    pickupCoordinates: { lat: 28.6129, lng: 77.2295 },
-    destinationCoordinates: { lat: 28.6139, lng: 77.209 },
-    passengers: 2,
-    maxPassengers: 4,
-    cost: 5.5,
-    carModel: "Honda Civic",
-    carColor: "Blue",
-    licensePlate: "ABC-1234",
-  },
-  {
-    id: "2",
-    driverName: "Samantha Lee",
-    driverAvatar: "/placeholder.svg?height=40&width=40",
-    driverRating: 4.9,
-    eventName: "Basketball Championship",
-    eventDate: "2025-04-20T19:30:00",
-    departureTime: "2025-04-20T18:30:00",
-    pickupLocation: "North Campus Parking",
-    pickupCoordinates: { lat: 28.6159, lng: 77.2195 },
-    destinationCoordinates: { lat: 28.6189, lng: 77.219 },
-    passengers: 1,
-    maxPassengers: 4,
-    cost: 4.0,
-    carModel: "Toyota Corolla",
-    carColor: "Silver",
-    licensePlate: "XYZ-5678",
-  },
-]
-
 export default function BookRidePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const rideId = searchParams.get("ride")
 
-  const [ride, setRide] = useState<(typeof mockRides)[0] | null>(null)
+  const [ride, setRide] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [passengerCount, setPassengerCount] = useState("1")
   const [specialRequests, setSpecialRequests] = useState("")
@@ -71,13 +32,44 @@ export default function BookRidePage() {
   const [showSuccess, setShowSuccess] = useState(false)
 
   useEffect(() => {
-    // Simulate API call to fetch ride details
-    setIsLoading(true)
-    setTimeout(() => {
-      const foundRide = mockRides.find((r) => r.id === rideId)
-      setRide(foundRide || null)
-      setIsLoading(false)
-    }, 1000)
+    const fetchRideDetails = async () => {
+      setIsLoading(true)
+      try {
+        const response = await fetch(`/api/passenger/rides/${rideId}`)
+        if (!response.ok) {
+          throw new Error("Failed to fetch ride details")
+        }
+        const { data } = await response.json()
+        const rideDetails = {
+          id: data.id,
+          driverName: data.driver.name,
+          driverAvatar: "/placeholder.svg", // Placeholder for driver avatar
+          driverRating: 4.5, // Placeholder rating
+          eventName: data.event.title,
+          eventDate: `${data.event.date}T${data.event.time}`,
+          departureTime: data.departure_time,
+          pickupLocation: data.start_location,
+          pickupCoordinates: { lat: 28.6129, lng: 77.2295 }, // Placeholder coordinates
+          destinationCoordinates: { lat: 28.6139, lng: 77.209 }, // Placeholder coordinates
+          passengers: data.passenger_ids.length,
+          maxPassengers: data.available_seats + data.passenger_ids.length,
+          cost: data.cost,
+          carModel: data.driver.vehicle_info.make + data.driver.vehicle_info.model, // Placeholder car model
+          carColor: data.driver.vehicle_info.color, // Placeholder car color
+          licensePlate: data.driver.vehicle_info.licensePlate, // Placeholder license plate
+        }
+        setRide(rideDetails)
+      } catch (error) {
+        console.error(error)
+        setRide(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (rideId) {
+      fetchRideDetails()
+    }
   }, [rideId])
 
   const handleBookRide = () => {
@@ -186,12 +178,12 @@ export default function BookRidePage() {
                       {
                         position: ride.pickupCoordinates,
                         title: "Pickup: " + ride.pickupLocation,
-                        info: `Departure: ${format(new Date(ride.departureTime), "h:mm a")}`,
+                        info: `Departure: ${ride.departure_time}`,
                       },
                       {
                         position: ride.destinationCoordinates,
                         title: "Event: " + ride.eventName,
-                        info: `Start time: ${format(new Date(ride.eventDate), "h:mm a")}`,
+                        info: `Start time: ${ride.eventDate}`,
                       },
                     ]}
                     showTraffic={true}
@@ -239,8 +231,8 @@ export default function BookRidePage() {
 
                 <div>
                   <Label>Payment Method</Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                    <div
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    {/* <div
                       className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                         paymentMethod === "card"
                           ? "border-hopin-orange bg-hopin-orange/5"
@@ -252,7 +244,7 @@ export default function BookRidePage() {
                         <CreditCard className="h-5 w-5 mr-2 text-hopin-orange" />
                         <span>Credit Card</span>
                       </div>
-                    </div>
+                    </div> */}
                     <div
                       className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                         paymentMethod === "upi"

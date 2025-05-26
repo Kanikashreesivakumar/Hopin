@@ -8,20 +8,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Calendar, Car, Clock, DollarSign, MapPin, Route, Star, User } from "lucide-react"
+import { Calendar, Clock, DollarSign, MapPin, Route, Star, User } from "lucide-react"
 
 interface RideCardProps {
   ride: {
     id: number
     driverName: string
-    driverRating: number
+    driverRating?: number // Optional as it may not always be present
     eventName: string
-    eventDate: string
-    pickupPoint: string
+    departureTime: string
+    startLocation: string
     cost: number
     availableSeats: number
-    carModel: string
-    departureTime: string
+    notes?: string // Optional field for additional ride notes
   }
   onViewRoute?: () => void
   onBookRide?: () => void
@@ -50,10 +49,12 @@ export default function RideCard({ ride, onViewRoute, onBookRide, className = ""
               </Avatar>
               <div>
                 <div className="font-medium">{ride.driverName}</div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
-                  <span>{ride.driverRating}</span>
-                </div>
+                {ride.driverRating && (
+                  <div className="flex items-center text-sm text-gray-500">
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
+                    <span>{ride.driverRating}</span>
+                  </div>
+                )}
               </div>
             </div>
             <Badge className="bg-hopin-orange text-white">₹{ride.cost}</Badge>
@@ -62,29 +63,26 @@ export default function RideCard({ ride, onViewRoute, onBookRide, className = ""
         <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-center text-sm">
-              <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-              <span>{format(new Date(ride.eventDate), "MMM d, yyyy")}</span>
+              <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+              <span>{ride.startLocation}</span>
             </div>
             <div className="flex items-center text-sm font-medium">
               <Clock className="h-4 w-4 mr-2 text-gray-500" />
-              <span>Departure: {format(new Date(ride.departureTime), "h:mm a")}</span>
-            </div>
-            <div className="flex items-center text-sm">
-              <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-              <span>{ride.pickupPoint}</span>
-            </div>
-            <div className="flex items-center text-sm">
-              <Car className="h-4 w-4 mr-2 text-gray-500" />
-              <span>{ride.carModel}</span>
+              <span>Departure: {format(new Date(ride.departureTime), "h:mm a, MMM d, yyyy")}</span>
             </div>
             <div className="flex items-center text-sm">
               <User className="h-4 w-4 mr-2 text-gray-500" />
               <span>{ride.availableSeats} seats available</span>
             </div>
+            {ride.notes && (
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Notes: {ride.notes}
+              </div>
+            )}
           </div>
         </CardContent>
         <CardFooter className="p-4 pt-0 flex flex-col space-y-2">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             className="w-full border-hopin-orange text-hopin-orange hover:bg-hopin-orange/10"
@@ -92,7 +90,7 @@ export default function RideCard({ ride, onViewRoute, onBookRide, className = ""
           >
             <Route className="h-4 w-4 mr-2" />
             View Route
-          </Button>
+          </Button> */}
           <Button asChild className="w-full bg-hopin-orange hover:bg-hopin-orange-dark text-white" onClick={onBookRide}>
             <Link href={`/dashboard/passenger/book?ride=${ride.id}`}>
               <DollarSign className="h-4 w-4 mr-2" />

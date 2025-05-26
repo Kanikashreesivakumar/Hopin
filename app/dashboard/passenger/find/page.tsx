@@ -27,15 +27,40 @@ export default function FindRidePage() {
   const [isFetching, setIsFetching] = useState(true)
 
   useEffect(() => {
-    
     const fetchRides = async () => {
       setIsFetching(true)
       try {
         const res = await fetch("/api/admin/rides")
         const json = await res.json()
         if (json.success) {
-          setRides(json.data)
-          setFilteredRides(json.data)
+          setRides(
+            json.data.map((ride: any) => ({
+              id: ride.id,
+              startLocation: ride.start_location,
+              endLocation: ride.end_location,
+              departureTime: ride.departure_time,
+              availableSeats: ride.available_seats,
+              cost: ride.cost,
+              notes: ride.notes,
+              status: ride.status,
+              driverName: ride.driver?.name || ride.driverName,
+              eventName: ride.event?.title || ride.eventName,
+            }))
+          )
+          setFilteredRides(
+            json.data.map((ride: any) => ({
+              id: ride.id,
+              startLocation: ride.start_location,
+              endLocation: ride.end_location,
+              departureTime: ride.departure_time,
+              availableSeats: ride.available_seats,
+              cost: ride.cost,
+              notes: ride.notes,
+              status: ride.status,
+              driverName: ride.driver?.name || ride.driverName,
+              eventName: ride.event?.title || ride.eventName,
+            }))
+          )
         } else {
           setRides([])
           setFilteredRides([])
@@ -57,9 +82,9 @@ export default function FindRidePage() {
       if (searchTerm) {
         results = results.filter(
           (ride) =>
-            (ride.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              ride.pickupPoint?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              ride.driverName?.toLowerCase().includes(searchTerm.toLowerCase()))
+            ride.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ride.startLocation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ride.driverName?.toLowerCase().includes(searchTerm.toLowerCase())
         )
       }
       if (event !== "all") {
@@ -67,7 +92,7 @@ export default function FindRidePage() {
       }
       if (date) {
         results = results.filter((ride) => {
-          const rideDate = new Date(ride.eventDate)
+          const rideDate = new Date(ride.departureTime)
           return rideDate.toDateString() === date.toDateString()
         })
       }
@@ -78,30 +103,17 @@ export default function FindRidePage() {
 
   const uniqueEvents = Array.from(new Set(rides.map((ride) => ride.eventName)))
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
-  }
-
   const handleRideSelect = (ride: any) => {
     setSelectedRide(ride)
     setShowMap(true)
   }
 
+  const handleViewRoute = (ride: any) => {
+    handleRideSelect(ride)
+  }
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-      
-
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -211,6 +223,7 @@ export default function FindRidePage() {
             exit={{ opacity: 0, height: 0 }}
             className="mb-8"
           >
+            
             <Card>
               <CardHeader className="pb-0">
                 <div className="flex justify-between items-center">
@@ -232,12 +245,12 @@ export default function FindRidePage() {
                     {
                       position: { lat: 28.6129, lng: 77.2295 },
                       title: "Pickup: " + selectedRide.pickupPoint,
-                      info: `Departure: ${format(new Date(selectedRide.departureTime), "h:mm a")}`,
+                      info: `Departure: ${selectedRide.departureTime}`,
                     },
                     {
                       position: { lat: 28.6139, lng: 77.209 },
                       title: "Event: " + selectedRide.eventName,
-                      info: `Start time: ${format(new Date(selectedRide.eventDate), "h:mm a")}`,
+                      info: `Start time: ${selectedRide.event.date}`,
                     },
                   ]}
                   showTraffic={true}
@@ -247,7 +260,7 @@ export default function FindRidePage() {
             </Card>
           </motion.div>
         )}
-
+        
         {isFetching ? (
           <div className="text-center py-12">
             <h3 className="text-xl font-medium mb-2">Loading rides...</h3>
@@ -255,14 +268,25 @@ export default function FindRidePage() {
           </div>
         ) : (
           <motion.div
-            variants={container}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                },
+              },
+            }}
             initial="hidden"
             animate="show"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredRides.length > 0 ? (
               filteredRides.map((ride) => (
-                <motion.div key={ride.id} variants={item}>
+                <motion.div
+                  key={ride.id}
+                  variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+                >
                   <RideCard ride={ride} onViewRoute={() => handleRideSelect(ride)} />
                 </motion.div>
               ))
