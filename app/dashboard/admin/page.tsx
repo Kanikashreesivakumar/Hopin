@@ -129,7 +129,6 @@ export default function AdminDashboard() {
     }
   };
 
-<<<<<<< HEAD
   const handleDeleteEvent = async (eventId: string | number) => {
     if (!eventId) {
       console.error('No event ID provided');
@@ -142,37 +141,42 @@ export default function AdminDashboard() {
       });
       
       const data = await response.json();
-      console.log('Delete response:', data);
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to delete event');
       }
 
-      // Refresh the events list or update UI
-      // ...
+
+      toast({
+        title: "Success",
+        description: "Event deleted successfully",
+        variant: "default",
+      });
       
     } catch (error) {
       console.error('Error deleting event:', error);
-      // Handle error (show toast notification, etc.)
+      toast({
+        title: "Error",
+        description: "Failed to delete event",
+        variant: "destructive",
+      });
     }
-=======
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  const { totalUsers, totalRides, totalEvents, activeRides, upcomingEvents, recentRides } = dashboardData || {
+  const dashboardStats = {
     totalUsers: 0,
     totalRides: 0,
     totalEvents: 0,
     activeRides: 0,
     upcomingEvents: [],
     recentRides: [],
->>>>>>> 0b244d0bb06656db757e3de2a97dbae395a9abad
   };
+
+  const { totalUsers, totalRides, totalEvents, activeRides, upcomingEvents, recentRides } = dashboardData || dashboardStats;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

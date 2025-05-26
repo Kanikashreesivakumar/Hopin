@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
-
+import { supabase } from '@/lib/supabase';
+import { parseISO, isValid } from 'date-fns';
 
 export async function GET(
   request: Request,
   context: { params: { id: string } }
 ) {
   try {
-<<<<<<< HEAD
-    
-    const id = params?.id;
+    const { id } = context.params;
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Ride ID is required' },
@@ -19,76 +16,60 @@ export async function GET(
       );
     }
 
-  
     const { data: rides, error } = await supabase
       .from('rides')
-      .select('*')
-      .eq('user', id)
-      .single();
+      .select(`
+        *,
+        events (
+          id,
+          title,
+          date,
+          location
+        ),
+        users (
+          id,
+          name,
+          email
+        )
+      `)
+      .eq('driver_id', id);
 
     if (error) {
       throw error;
     }
 
-    if (!rides) {
-      return NextResponse.json(
-        { success: false, error: 'Ride not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ success: true, data: rides });
-=======
-    const { id } = context.params
-
-    // Fetch rides for the driver with user.id === params.id
-    const { data: rides, error: ridesFetchError } = await supabase
-      .from('rides')
-      .select('*')
-      .eq('driver_id', id)
-
-    if (ridesFetchError) throw ridesFetchError
-
-    // Fetch passenger details and event details for each ride
-    const ridesWithDetails = await Promise.all(
-      rides.map(async (ride) => {
-        const passengerIds = ride.passenger_ids || []
-
-        // Fetch passengers
-        const { data: passengers, error: passengersFetchError } = await supabase
-          .from('profiles')
-          .select('id, name')
-          .in('id', passengerIds)
-
-        if (passengersFetchError) throw passengersFetchError
-
-        // Fetch event details
-        const { data: event, error: eventFetchError } = await supabase
-          .from('events')
-          .select('id, title, date, time, location, description, image')
-          .eq('id', ride.event_id)
-          .single()
-
-        if (eventFetchError) throw eventFetchError
-
-        return {
-          ...ride,
-          passengers: passengers || [],
-          event: event || null,
+    // Transform the data and ensure valid date format
+    const ridesWithDetails = rides.map(ride => {
+      let eventDate = null;
+      if (ride.events?.date) {
+        try {
+          // Convert the date string to a timestamp first
+          const timestamp = Date.parse(ride.events.date);
+          if (!isNaN(timestamp)) {
+            eventDate = new Date(timestamp).toISOString();
+          }
+        } catch (e) {
+          console.error('Date parsing error:', e);
         }
-      })
-    )
+      }
 
-    return NextResponse.json({ success: true, data: ridesWithDetails })
->>>>>>> 0b244d0bb06656db757e3de2a97dbae395a9abad
+      return {
+        ...ride,
+        event: ride.events,
+        driver: ride.users,
+        eventDate
+      };
+    });
+
+    return NextResponse.json(
+      { success: true, data: ridesWithDetails },
+      { status: 200 }
+    );
+
   } catch (error) {
     console.error('Error fetching ride:', error);
     return NextResponse.json(
-<<<<<<< HEAD
-      { success: false, error: 'Failed to fetch ride details' },
-=======
-      { error: (error as Error).message || error },
->>>>>>> 0b244d0bb06656db757e3de2a97dbae395a9abad
+      { success: false, error: error instanceof Error ? error.message : 'Failed to fetch ride details' },
       { status: 500 }
     );
   }

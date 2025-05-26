@@ -31,6 +31,34 @@ interface RideCardProps {
 export default function RideCard({ ride, onViewRoute, onBookRide, className = "" }: RideCardProps) {
   const [isHovered, setIsHovered] = useState(false)
 
+  const formatEventDate = (dateString: string | null | undefined) => {
+    if (!dateString) return "Date not available"
+    try {
+      const timestamp = Date.parse(dateString)
+      if (isNaN(timestamp)) {
+        return "Invalid date"
+      }
+      return format(new Date(timestamp), "MMM d, yyyy")
+    } catch (error) {
+      console.error("Date formatting error:", error)
+      return "Date not available"
+    }
+  }
+
+  const formatDepartureTime = (timeString: string | null | undefined) => {
+    if (!timeString) return "Time not available"
+    try {
+      const timestamp = Date.parse(timeString)
+      if (isNaN(timestamp)) {
+        return "Invalid time"
+      }
+      return format(new Date(timestamp), "h:mm a")
+    } catch (error) {
+      console.error("Time formatting error:", error)
+      return "Time not available"
+    }
+  }
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -63,11 +91,11 @@ export default function RideCard({ ride, onViewRoute, onBookRide, className = ""
           <div className="space-y-3">
             <div className="flex items-center text-sm">
               <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-              <span>{format(new Date(ride.eventDate), "MMM d, yyyy")}</span>
+              <span>{formatEventDate(ride.eventDate)}</span>
             </div>
             <div className="flex items-center text-sm font-medium">
               <Clock className="h-4 w-4 mr-2 text-gray-500" />
-              <span>Departure: {format(new Date(ride.departureTime), "h:mm a")}</span>
+              <span>Departure: {formatDepartureTime(ride.departureTime)}</span>
             </div>
             <div className="flex items-center text-sm">
               <MapPin className="h-4 w-4 mr-2 text-gray-500" />
