@@ -142,6 +142,33 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteEvent = async (eventId: string | number) => {
+    if (!eventId) {
+      console.error('No event ID provided');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/events?eventId=${eventId}`, {
+        method: 'DELETE',
+      });
+      
+      const data = await response.json();
+      console.log('Delete response:', data);
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete event');
+      }
+
+      // Refresh the events list or update UI
+      // ...
+      
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      // Handle error (show toast notification, etc.)
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <main className="container mx-auto px-4 py-8">
