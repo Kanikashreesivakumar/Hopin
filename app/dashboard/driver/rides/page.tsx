@@ -1,59 +1,88 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar, Car, Clock, MapPin, MoreHorizontal, Phone, Users } from "lucide-react"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Calendar,
+  Car,
+  Clock,
+  MapPin,
+  MoreHorizontal,
+  Phone,
+  Users,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { format } from "date-fns"
-import Mapbox from "@/components/mapbox"
-import { useAuth } from "@/hooks/AuthContext"
+} from "@/components/ui/dropdown-menu";
+import { format } from "date-fns";
+import Mapbox from "@/components/mapbox";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function MyRidesPage() {
-  const [activeTab, setActiveTab] = useState("all")
-  const [selectedRide, setSelectedRide] = useState<string | null>(null)
-  const [rides, setRides] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("all");
+  const [selectedRide, setSelectedRide] = useState<string | null>(null);
+  const [rides, setRides] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
     if (!user?.id) return;
     setIsLoading(true);
     fetch(`/api/rides/${user.id}`)
-      .then(res => res.json())
-      .then(json => {
-        if (json.success) setRides(json.data || []);
-        else setRides([]);
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          setRides(
+            json.data.map((ride: any) => ({
+              id: ride.id,
+              startLocation: ride.start_location,
+              endLocation: ride.end_location,
+              departureTime: ride.departure_time,
+              availableSeats: ride.available_seats,
+              cost: ride.cost,
+              notes: ride.notes,
+              passengers: ride.passengers,
+              event: ride.event, // Include event data
+            }))
+          );
+        } else {
+          setRides([]);
+        }
       })
       .catch(() => setRides([]))
       .finally(() => setIsLoading(false));
   }, [user?.id]);
 
-  // Filter rides based on active tab
-  const filteredRides = activeTab === "all" ? rides : rides.filter((ride) => ride.status === activeTab)
+  const filteredRides =
+    activeTab === "all"
+      ? rides
+      : rides.filter((ride) => ride.status === activeTab);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">My Rides</h1>
-            <p className="text-gray-600 dark:text-gray-400">Manage your upcoming and past rides</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Manage your upcoming and past rides
+            </p>
           </div>
 
-          <Button asChild className="mt-4 md:mt-0 bg-hopin-orange hover:bg-hopin-orange-dark text-white">
+          <Button
+            asChild
+            className="mt-4 md:mt-0 bg-hopin-orange hover:bg-hopin-orange-dark text-white"
+          >
             <Link href="/dashboard/driver/offer-ride">
               <Car className="mr-2 h-4 w-4" />
               Offer a Ride
@@ -66,7 +95,11 @@ export default function MyRidesPage() {
             <CardTitle>Ride Management</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
               <TabsList className="w-full md:w-auto">
                 <TabsTrigger value="all">All Rides</TabsTrigger>
                 <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
@@ -100,97 +133,36 @@ export default function MyRidesPage() {
                       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="font-semibold">{ride.eventName}</h3>
+                            <h3 className="font-semibold">
+                              {ride.startLocation} to {ride.endLocation}
+                            </h3>
                             <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
-                              <Calendar className="h-4 w-4 mr-1" />
-                              <span>{format(new Date(ride.eventDate), "MMM d, yyyy")}</span>
+                              <Clock className="h-4 w-4 mr-1" />
+                              <span>
+                                {format(
+                                  new Date(ride.departureTime),
+                                  "h:mm a, MMM d, yyyy"
+                                )}
+                              </span>
                             </div>
                           </div>
-                          <Badge
-                            className={
-                              ride.status === "upcoming"
-                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                : ride.status === "completed"
-                                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                  : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                            }
-                          >
-                            {ride.status.charAt(0).toUpperCase() + ride.status.slice(1)}
-                          </Badge>
                         </div>
                       </div>
 
                       <div className="p-4 space-y-3">
                         <div className="flex items-center text-sm">
-                          <Clock className="h-4 w-4 mr-2 text-gray-500" />
-                          <span>Departure: {format(new Date(ride.departureTime), "h:mm a")}</span>
-                        </div>
-                        <div className="flex items-center text-sm">
-                          <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                          <span>{ride.pickupLocation}</span>
-                        </div>
-                        <div className="flex items-center text-sm">
                           <Users className="h-4 w-4 mr-2 text-gray-500" />
                           <span>
-                            {ride.passengers.length}/{ride.maxPassengers} passengers
+                            {ride.passengers.length}/{ride.availableSeats}{" "}
+                            passengers
                           </span>
                         </div>
                         <div className="flex items-center text-sm font-medium text-hopin-orange">
-                          <span>₹{ride.earnings} earnings</span>
+                          <span>₹{ride.cost} cost</span>
                         </div>
-                      </div>
-
-                      <div className="p-4 pt-0 flex justify-between items-center">
-                        <div className="flex -space-x-2">
-                          {ride.passengers.slice(0, 3).map((passenger) => (
-                            <Avatar key={passenger.id} className="h-8 w-8 border-2 border-white dark:border-gray-800">
-                              <AvatarImage src={passenger.avatar || "/placeholder.svg"} alt={passenger.name} />
-                              <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
-                                {passenger.name.charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
-                          ))}
-                          {ride.passengers.length > 3 && (
-                            <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium border-2 border-white dark:border-gray-800">
-                              +{ride.passengers.length - 3}
-                            </div>
-                          )}
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          Notes: {ride.notes}
                         </div>
-
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Actions</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setSelectedRide(ride.id)
-                              }}
-                            >
-                              <Car className="h-4 w-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            {ride.status === "upcoming" && (
-                              <>
-                                <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                                  <MapPin className="h-4 w-4 mr-2" />
-                                  Share Location
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  className="text-red-600 dark:text-red-400"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  Cancel Ride
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
                       </div>
                     </CardContent>
                   </Card>
@@ -205,17 +177,11 @@ export default function MyRidesPage() {
                     {activeTab === "all"
                       ? "You haven't offered any rides yet"
                       : activeTab === "upcoming"
-                        ? "You don't have any upcoming rides"
-                        : activeTab === "completed"
-                          ? "You don't have any completed rides"
-                          : "You don't have any cancelled rides"}
+                      ? "You don't have any upcoming rides"
+                      : activeTab === "completed"
+                      ? "You don't have any completed rides"
+                      : "You don't have any cancelled rides"}
                   </p>
-                  <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white">
-                    <Link href="/dashboard/driver/offer-ride">
-                      <Car className="mr-2 h-4 w-4" />
-                      Offer a Ride
-                    </Link>
-                  </Button>
                 </div>
               )}
             </div>
@@ -229,21 +195,26 @@ export default function MyRidesPage() {
               className="lg:col-span-2"
             >
               {(() => {
-                const ride = rides.find((r) => r.id === selectedRide)
-                if (!ride) return null
+                const ride = rides.find((r) => r.id === selectedRide);
+                if (!ride) return null;
 
                 return (
                   <Card>
                     <CardHeader className="pb-0">
                       <div className="flex justify-between items-center">
                         <CardTitle>Ride Details</CardTitle>
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedRide(null)} className="lg:hidden">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedRide(null)}
+                          className="lg:hidden"
+                        >
                           Back to List
                         </Button>
                       </div>
                     </CardHeader>
                     <CardContent className="pt-6 space-y-6">
-                      <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                      {/* <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
                         <Mapbox
                           height="300px"
                           showDirections={true}
@@ -253,28 +224,32 @@ export default function MyRidesPage() {
                             {
                               position: ride.pickupCoordinates,
                               title: "Pickup: " + ride.pickupLocation,
-                              info: `Departure: ${format(new Date(ride.departureTime), "h:mm a")}`,
+                              info: `Departure: ${ride.departureTime}`,
                             },
                             {
                               position: ride.destinationCoordinates,
                               title: "Event: " + ride.eventName,
-                              info: `Start time: ${format(new Date(ride.eventDate), "h:mm a")}`,
+                              info: `Start time: ${ride.eventDate}`,
                             },
                           ]}
                           showTraffic={true}
                         />
-                      </div>
+                      </div> */}
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <h3 className="text-lg font-semibold mb-4">Event Information</h3>
+                          <h3 className="text-lg font-semibold mb-4">
+                            Event Information
+                          </h3>
                           <div className="space-y-3">
                             <div className="flex items-center">
                               <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                               <div>
-                                <div className="font-medium">{ride.eventName}</div>
+                                <div className="font-medium">
+                                  {ride.event?.title}
+                                </div>
                                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                                  {format(new Date(ride.eventDate), "EEEE, MMMM d, yyyy")}
+                                  {ride.event?.date}
                                 </div>
                               </div>
                             </div>
@@ -283,7 +258,7 @@ export default function MyRidesPage() {
                               <div>
                                 <div className="font-medium">Event Time</div>
                                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                                  {format(new Date(ride.eventDate), "h:mm a")}
+                                  {ride.event?.time}
                                 </div>
                               </div>
                             </div>
@@ -291,22 +266,33 @@ export default function MyRidesPage() {
                         </div>
 
                         <div>
-                          <h3 className="text-lg font-semibold mb-4">Ride Information</h3>
+                          <h3 className="text-lg font-semibold mb-4">
+                            Ride Information
+                          </h3>
                           <div className="space-y-3">
                             <div className="flex items-center">
                               <Clock className="h-4 w-4 mr-2 text-gray-500" />
                               <div>
-                                <div className="font-medium">Departure Time</div>
+                                <div className="font-medium">
+                                  Departure Time
+                                </div>
                                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                                  {format(new Date(ride.departureTime), "h:mm a")}
+                                  {format(
+                                    new Date(ride.departureTime),
+                                    "h:mm a"
+                                  )}
                                 </div>
                               </div>
                             </div>
                             <div className="flex items-center">
                               <MapPin className="h-4 w-4 mr-2 text-gray-500" />
                               <div>
-                                <div className="font-medium">Pickup Location</div>
-                                <div className="text-sm text-gray-600 dark:text-gray-400">{ride.pickupLocation}</div>
+                                <div className="font-medium">
+                                  Pickup Location
+                                </div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400">
+                                  {ride.startLocation}
+                                </div>
                               </div>
                             </div>
                             <div className="flex items-center">
@@ -314,7 +300,8 @@ export default function MyRidesPage() {
                               <div>
                                 <div className="font-medium">Passengers</div>
                                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                                  {ride.passengers.length}/{ride.maxPassengers} seats filled
+                                  {ride.passengers.length}/{ride.availableSeats}{" "}
+                                  seats filled
                                 </div>
                               </div>
                             </div>
@@ -323,28 +310,43 @@ export default function MyRidesPage() {
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-semibold mb-4">Passenger List</h3>
+                        <h3 className="text-lg font-semibold mb-4">
+                          Passenger List
+                        </h3>
                         <div className="space-y-3">
-                          {ride.passengers.map((passenger) => (
+                          {ride.passengers.map((passenger: any) => (
                             <div
                               key={passenger.id}
                               className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg"
                             >
                               <div className="flex items-center">
                                 <Avatar className="h-10 w-10 mr-3">
-                                  <AvatarImage src={passenger.avatar || "/placeholder.svg"} alt={passenger.name} />
+                                  <AvatarImage
+                                    src={passenger.avatar || "/placeholder.svg"}
+                                    alt={passenger.name}
+                                  />
                                   <AvatarFallback className="bg-hopin-orange/20 text-hopin-orange">
                                     {passenger.name.charAt(0)}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div>
-                                  <div className="font-medium">{passenger.name}</div>
-                                  <div className="text-sm text-gray-600 dark:text-gray-400">{passenger.phone}</div>
+                                  <div className="font-medium">
+                                    {passenger.name}
+                                  </div>
+                                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                                    {passenger.phone}
+                                  </div>
                                 </div>
                               </div>
-                              <Button variant="ghost" size="icon" className="text-hopin-orange">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-hopin-orange"
+                              >
                                 <Phone className="h-4 w-4" />
-                                <span className="sr-only">Call {passenger.name}</span>
+                                <span className="sr-only">
+                                  Call {passenger.name}
+                                </span>
                               </Button>
                             </div>
                           ))}
@@ -354,13 +356,18 @@ export default function MyRidesPage() {
                       <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                         <div className="flex justify-between items-center">
                           <span className="font-semibold">Total Earnings</span>
-                          <Badge className="bg-hopin-orange text-white text-lg py-1 px-3">₹{ride.earnings}</Badge>
+                          <Badge className="bg-hopin-orange text-white text-lg py-1 px-3">
+                            ₹{ride.earnings || 0}
+                          </Badge>
                         </div>
                       </div>
 
                       {ride.status === "upcoming" && (
                         <div className="flex flex-col sm:flex-row gap-3">
-                          <Button asChild className="bg-hopin-orange hover:bg-hopin-orange-dark text-white flex-1">
+                          <Button
+                            asChild
+                            className="bg-hopin-orange hover:bg-hopin-orange-dark text-white flex-1"
+                          >
                             <Link href="/dashboard/driver/location">
                               <MapPin className="mr-2 h-4 w-4" />
                               Share Location
@@ -376,12 +383,12 @@ export default function MyRidesPage() {
                       )}
                     </CardContent>
                   </Card>
-                )
+                );
               })()}
             </motion.div>
           )}
         </div>
       </main>
     </div>
-  )
+  );
 }

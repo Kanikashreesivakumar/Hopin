@@ -32,8 +32,10 @@ export default function DriverDashboard() {
       })
       .catch(() => setDriverRides([]))
       .finally(() => setIsLoading(false));
-  }, [user?.id]);
 
+     
+  }, [user?.id]);
+  console.log("Driver Rides:", driverRides); 
   const upcomingRides = driverRides;
 
   const rideRequests = [
@@ -106,22 +108,22 @@ export default function DriverDashboard() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-semibold">{ride.eventName}</h3>
+                          <h3 className="font-semibold">{ride.event.title}</h3>
                           <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
                             <Calendar className="h-4 w-4 mr-1" />
-                            <span>{ride.date}</span>
+                            <span>{ride.event.date}</span>
                             <span className="mx-2">•</span>
                             <Clock className="h-4 w-4 mr-1" />
-                            <span>{ride.time}</span>
+                            <span>{ride.event.time}</span>
                           </div>
                         </div>
-                        <Badge className="bg-hopin-orange text-white">₹{ride.earnings}</Badge>
+                        <Badge className="bg-hopin-orange text-white">₹{ride.cost}</Badge>
                       </div>
 
                       <div className="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div className="flex items-center text-sm">
                           <MapPin className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
-                          <span>{ride.pickupLocation}</span>
+                          <span>{ride.start_location}</span>
                         </div>
 
                         <div className="flex items-center">
@@ -142,7 +144,7 @@ export default function DriverDashboard() {
                             ))}
                           </div>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {ride.passengers}/{ride.maxPassengers} passengers
+                            {ride.passengers.length} passengers
                           </span>
                         </div>
                       </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -29,6 +29,7 @@ import { exportAnalytics } from "@/utils/exportAnalytics";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/AuthContext";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -37,63 +38,51 @@ export default function AdminDashboard() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [dashboardData, setDashboardData] = useState<{
+    totalUsers: number;
+    totalRides: number;
+    totalEvents: number;
+    activeRides: number;
+    upcomingEvents: Array<{
+      id: number;
+      title: string;
+      date: string;
+      time: string;
+      location: string;
+      attendees: number;
+    }>;
+    recentRides: Array<{
+      id: number;
+      driverName: string;
+      passengerCount: number;
+      eventName: string;
+      date: string;
+      status: string;
+    }>;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [timeFrame, setTimeFrame] = useState("year");
+  const [isExporting, setIsExporting] = useState(false);
 
-  const platformStats = {
-    totalUsers: 1248,
-    totalRides: 856,
-    totalEvents: 42,
-    activeRides: 18,
-  }
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch('/api/admin/dasboard');
+        console.log(response)
+        if (!response.ok) {
+          throw new Error('Failed to fetch dashboard data');
+        }
+        const result = await response.json();
+        setDashboardData(result.data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: "Summer Music Festival",
-      date: "June 15, 2023",
-      time: "6:00 PM",
-      location: "Central Park",
-      attendees: 320,
-      rides: 45,
-    },
-    {
-      id: 2,
-      title: "Tech Conference 2023",
-      date: "July 10, 2023",
-      time: "9:00 AM",
-      location: "Convention Center",
-      attendees: 180,
-      rides: 28,
-    },
-  ]
-
-  // Sample recent rides data
-  const recentRides = [
-    {
-      id: 1,
-      driverName: "Alex Johnson",
-      passengerCount: 3,
-      eventName: "Spring Concert",
-      date: "May 28, 2023",
-      status: "completed",
-    },
-    {
-      id: 2,
-      driverName: "Sarah Miller",
-      passengerCount: 2,
-      eventName: "Tech Meetup",
-      date: "May 27, 2023",
-      status: "completed",
-    },
-    {
-      id: 3,
-      driverName: "Mike Chen",
-      passengerCount: 4,
-      eventName: "Summer Music Festival",
-      date: "June 15, 2023",
-      status: "upcoming",
-    },
-  ]
+    fetchDashboardData();
+  }, []);
 
   const handleGenerateDescription = async (event: any) => {
     try {
@@ -118,8 +107,6 @@ export default function AdminDashboard() {
   }
 
   const { toast } = useToast();
-  const [timeFrame, setTimeFrame] = useState("year");
-  const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -142,6 +129,7 @@ export default function AdminDashboard() {
     }
   };
 
+<<<<<<< HEAD
   const handleDeleteEvent = async (eventId: string | number) => {
     if (!eventId) {
       console.error('No event ID provided');
@@ -167,6 +155,23 @@ export default function AdminDashboard() {
       console.error('Error deleting event:', error);
       // Handle error (show toast notification, etc.)
     }
+=======
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  const { totalUsers, totalRides, totalEvents, activeRides, upcomingEvents, recentRides } = dashboardData || {
+    totalUsers: 0,
+    totalRides: 0,
+    totalEvents: 0,
+    activeRides: 0,
+    upcomingEvents: [],
+    recentRides: [],
+>>>>>>> 0b244d0bb06656db757e3de2a97dbae395a9abad
   };
 
   return (
@@ -193,7 +198,7 @@ export default function AdminDashboard() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <Card className="hopin-card">
               <div className="flex items-center">
                 <div className="bg-hopin-orange/10 p-4 rounded-full mr-4">
@@ -201,7 +206,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Total Users</div>
-                  <div className="text-2xl font-bold">{platformStats.totalUsers}</div>
+                  <div className="text-2xl font-bold">{totalUsers}</div>
                 </div>
               </div>
             </Card>
@@ -213,34 +218,24 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Total Rides</div>
-                  <div className="text-2xl font-bold">{platformStats.totalRides}</div>
+                  <div className="text-2xl font-bold">{totalRides}</div>
                 </div>
               </div>
             </Card>
 
             <Card className="hopin-card">
-              <div className="flex items-center">
+              <div className="flex items-center"> 
                 <div className="bg-hopin-orange/10 p-4 rounded-full mr-4">
                   <Ticket className="h-6 w-6 text-hopin-orange" />
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Total Events</div>
-                  <div className="text-2xl font-bold">{platformStats.totalEvents}</div>
+                  <div className="text-2xl font-bold">{totalEvents}</div>
                 </div>
               </div>
             </Card>
 
-            <Card className="hopin-card">
-              <div className="flex items-center">
-                <div className="bg-hopin-orange/10 p-4 rounded-full mr-4">
-                  <Clock className="h-6 w-6 text-hopin-orange" />
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Active Rides</div>
-                  <div className="text-2xl font-bold">{platformStats.activeRides}</div>
-                </div>
-              </div>
-            </Card>
+            
           </div>
         </motion.div>
 
@@ -264,7 +259,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-4">
-                {upcomingEvents.map((event) => (
+                {upcomingEvents.map((event: { id: number; title: string; date: string; time: string; location: string; attendees: number }) => (
                   <div
                     key={event.id}
                     className="border border-hopin-gray/20 dark:border-hopin-gray/10 rounded-lg p-4 hover:border-hopin-orange/50 transition-colors"
@@ -280,7 +275,7 @@ export default function AdminDashboard() {
                           <span>{event.time}</span>
                         </div>
                       </div>
-                      <Badge className="bg-hopin-orange text-white">{event.rides} rides</Badge>
+                      <Badge className="bg-hopin-orange text-white">ID: {event.id}</Badge>
                     </div>
 
                     <div className="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -295,14 +290,6 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    <div className="mt-4 flex justify-end gap-2">
-                      <Button variant="outline" className="border-hopin-gray/30">
-                        Edit
-                      </Button>
-                      <Button asChild className="hopin-button">
-                        <Link href={`/dashboard/admin/events/${event.id}`}>View Details</Link>
-                      </Button>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -336,7 +323,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-4">
-                {recentRides.map((ride) => (
+                {recentRides.map((ride: { id: number; driverName: string; passengerCount: number; eventName: string; date: string; status: string }) => (
                   <div
                     key={ride.id}
                     className="flex items-center justify-between p-3 border border-hopin-gray/20 dark:border-hopin-gray/10 rounded-lg hover:border-hopin-orange/50 transition-colors"
@@ -355,7 +342,7 @@ export default function AdminDashboard() {
 
                     <div className="flex items-center">
                       <div className="text-xs text-gray-500 dark:text-gray-400 mr-3 text-right">
-                        <div>{ride.date}</div>
+                        <div>{format(new Date(ride.date), "PPP p")}</div>
                         <div>{ride.passengerCount} passengers</div>
                       </div>
                       <Badge
@@ -465,7 +452,7 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-semibold">Quick Actions</h2>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button
                 asChild
                 variant="outline"
@@ -499,16 +486,7 @@ export default function AdminDashboard() {
                 </Link>
               </Button>
 
-              <Button
-                asChild
-                variant="outline"
-                className="h-auto py-6 flex flex-col items-center justify-center border-hopin-gray/30 hover:border-hopin-orange hover:bg-hopin-orange/5"
-              >
-                <Link href="/dashboard/admin/settings">
-                  <Settings className="h-6 w-6 mb-2 text-hopin-orange" />
-                  <span>Platform Settings</span>
-                </Link>
-              </Button>
+             
             </div>
           </Card>
         </motion.div>

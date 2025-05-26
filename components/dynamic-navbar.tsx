@@ -167,7 +167,7 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
               <div className="flex items-center space-x-4">
                 {isAuthenticated ? (
                   <>
-                    <DropdownMenu>
+                    {/* <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="relative">
                           <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
@@ -226,7 +226,7 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
                           </Button>
                         </div>
                       </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> */}
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -246,16 +246,16 @@ export default function DynamicNavbar({ role: propRole, userName: propUserName, 
                           <div className="bg-hopin-orange/10 text-hopin-orange rounded-md px-2 py-1 text-xs font-medium">
                             {role?.charAt(0).toUpperCase() + role?.slice(1)}
                           </div>
-                          <div className="text-xs text-gray-500">ID: {role?.charAt(0).toUpperCase()}12345</div>
+                          <div className="text-xs text-gray-500">ID: {user?.id?.slice(-8)}</div>
                         </div>
-                        <DropdownMenuItem>
+                        {/* <DropdownMenuItem>
                           <User className="mr-2 h-4 w-4" />
                           <span>Profile</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Settings className="mr-2 h-4 w-4" />
                           <span>Settings</span>
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={() => { logout(); router.push("/auth"); }}>
                           <LogOut className="mr-2 h-4 w-4" />

@@ -20,15 +20,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/AuthContext"
 
 interface Ride {
-  _id: string
+  id: string
   driverId: {
-    _id: string
+    id: string
     name: string
     avatar?: string
     rating?: number
   }
   eventId?: {
-    _id: string
+    id: string
     title: string
     date: string | Date
   }
@@ -64,31 +64,22 @@ export default function ViewAllRidesPage() {
       const result = await response.json()
       if (result.success) {
         const mappedRides = result.data.map((rideData: any) => ({
-          _id: rideData._id,
-          driverId: rideData.driverId
-            ? {
-                _id: rideData.driverId._id,
-                name: rideData.driverId.name || "Unknown Driver",
-                avatar: rideData.driverId.avatar,
-                rating: rideData.driverId.rating,
-              }
-            : { _id: "", name: "Unknown Driver" },
-          eventId: rideData.eventId
-            ? {
-                _id: rideData.eventId._id,
-                title: rideData.eventId.title || "Unknown Event",
-                date: rideData.eventId.date,
-              }
-            : undefined,
-          eventName: rideData.eventId?.title || "Unknown Event",
-          eventDate: rideData.eventId?.date || rideData.departureTime,
-          departureTime: rideData.departureTime,
-          startLocation: rideData.startLocation,
-          endLocation: rideData.endLocation,
-          passengerIds: rideData.passengerIds || [],
-          availableSeats: rideData.availableSeats,
+          id: rideData.id,
+          driverId: {
+            id: rideData.driver_id,
+            name: rideData.driverName || "Unknown Driver",
+          },
+          eventId: rideData.event_id,
+          eventName: rideData.eventName || "Unknown Event",
+          eventDate: rideData.departure_time,
+          departureTime: rideData.departure_time,
+          startLocation: rideData.start_location,
+          endLocation: rideData.end_location,
+          passengerIds: rideData.passenger_ids || [],
+          availableSeats: rideData.available_seats,
           cost: rideData.cost || 0,
-          status: rideData.status || "upcoming",
+          notes: rideData.notes || "",
+          status: "upcoming", // Default status as it is not provided in the sample data
         }))
         setRides(mappedRides)
         setFilteredRides(mappedRides)
@@ -108,10 +99,10 @@ export default function ViewAllRidesPage() {
   }, [])
 
   useEffect(() => {
-    let filtered = rides
+    let filteredRidesList = rides
 
     if (searchTerm) {
-      filtered = filtered.filter(
+      filteredRidesList = filteredRidesList.filter(
         (ride) =>
           (ride.driverId.name && ride.driverId.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (ride.eventName && ride.eventName.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -121,13 +112,14 @@ export default function ViewAllRidesPage() {
     }
 
     if (activeTab !== "all") {
-      filtered = filtered.filter((ride) => ride.status === activeTab)
+      filteredRidesList = filteredRidesList.filter((ride) => ride.status === activeTab)
     }
 
-    setFilteredRides(filtered)
+    setFilteredRides(filteredRidesList)
   }, [rides, searchTerm, activeTab])
 
-  const handleExportData = () => {
+  // Renamed the redeclared variable to avoid conflicts
+  const exportRideData = () => {
     console.log("Exporting data:", filteredRides)
     alert("Exporting ride data... (Check console for data)")
   }
@@ -158,7 +150,6 @@ export default function ViewAllRidesPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
-
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -169,7 +160,7 @@ export default function ViewAllRidesPage() {
           <Button
             variant="outline"
             className="mt-4 md:mt-0 border-hopin-orange text-hopin-orange hover:bg-hopin-orange/10"
-            onClick={handleExportData}
+            onClick={exportRideData}
           >
             <Download className="mr-2 h-4 w-4" />
             Export Data
@@ -226,7 +217,7 @@ export default function ViewAllRidesPage() {
                 <TableBody>
                   {filteredRides.length > 0 ? (
                     filteredRides.map((ride) => (
-                      <TableRow key={ride._id}>
+                      <TableRow key={ride.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">

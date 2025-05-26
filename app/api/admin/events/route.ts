@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       id: body.id || Date.now().toString() 
     };
     
-    console.log('Creating event with data:', eventData);
+    console.log('Creating event with data:', eventData); // Debug log
     
     const { data, error } = await supabase
       .from('events')
