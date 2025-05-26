@@ -227,7 +227,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 bg-[url('/loclogo.jpg?height=1080&width=1920')] bg-cover "
+          className="absolute inset-0 bg-[url('/hopin.jpg?height=1080&width=1920')] bg-cover "
         />
 
         <div className="relative z-20 flex items-center text-lg font-medium">

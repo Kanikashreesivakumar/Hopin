@@ -129,15 +129,45 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteEvent = async (eventId: string | number) => {
+    if (!eventId) {
+      console.error('No event ID provided');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/events?eventId=${eventId}`, {
+        method: 'DELETE',
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete event');
+      }
+
+
+      toast({
+        title: "Success",
+        description: "Event deleted successfully",
+        variant: "default",
+      });
+      
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete event",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  const { totalUsers, totalRides, totalEvents, activeRides, upcomingEvents, recentRides } = dashboardData || {
+  const dashboardStats = {
     totalUsers: 0,
     totalRides: 0,
     totalEvents: 0,
@@ -145,6 +175,8 @@ export default function AdminDashboard() {
     upcomingEvents: [],
     recentRides: [],
   };
+
+  const { totalUsers, totalRides, totalEvents, activeRides, upcomingEvents, recentRides } = dashboardData || dashboardStats;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

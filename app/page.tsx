@@ -371,12 +371,12 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {events.map((event, index) => (
+            {events.map((event) => (
               <motion.div
-                key={event.id}
+                key={event._id} 
                 initial={{ opacity: 0, y: 30 }}
                 animate={isEventsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 whileHover={{ y: -5, scale: 1.02 }}
                 className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all group"
               >
